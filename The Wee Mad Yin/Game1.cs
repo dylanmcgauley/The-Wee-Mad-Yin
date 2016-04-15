@@ -96,7 +96,7 @@ namespace The_Wee_Mad_Yin
 
             player_camera = new Camera(GraphicsDevice.Viewport);
 
-            background_main = new sprite(Content, "Background", 0,0, 1);
+            background_main = new sprite(Content, "main_menu", 0,0, 1);
             backgrounds[0] = new sprite(Content, "background_blueclouds", 0, 0, 1);
             backgrounds[1] = new sprite(Content, "Background2", 0, 0, 1);
             backgrounds[2] = new sprite(Content, "Background2", 0, 0, 1);
@@ -244,14 +244,27 @@ namespace The_Wee_Mad_Yin
 
             if (gameon == true)
             {
-                if (controls.IsKeyDown(Keys.A))
+
+                if (player_sprite.position.X < 0)
+                {
+                    player_sprite.position.X = 0;
+                }
+
+                if (player_sprite.position.X == 1600)
+                {
+                    player_camera.Position = new Vector2(0, 0);
+                    player_sprite.position.X = 0;
+                    level_number += 1;
+                }
+
+                if (controls.IsKeyDown(Keys.A) && player_sprite.position.X > 0)
                 {
                     player_sprite.position.X -= 1;
                     player_camera.Position -= new Vector2(1,0);
                     info_position.X -= 1;
                     //level_number = 1;
                 }
-                if (controls.IsKeyDown(Keys.D))
+                if (controls.IsKeyDown(Keys.D) && player_sprite.position.X < 2000)
                 {
                     player_sprite.position.X += 1;
                     player_camera.Position += new Vector2(1, 0);
@@ -295,7 +308,7 @@ namespace The_Wee_Mad_Yin
             if (leaderboard == true)
             {
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
-                spriteBatch.DrawString(info, "High Scores", new Vector2 ((screen_width / 2) - (screen_width / 20), (screen_height * 1/5 - screen_height / 10)), Color.White);
+                spriteBatch.DrawString(info, "High Scores", new Vector2 ((screen_width / 2) - (screen_width / 20), (screen_height * 1/4 - screen_height / 10)), Color.Red);
             }
 
             if (options == true)

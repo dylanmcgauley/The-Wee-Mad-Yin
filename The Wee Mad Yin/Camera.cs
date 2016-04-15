@@ -16,7 +16,7 @@ namespace The_Wee_Mad_Yin
             player_viewport = viewport;
 
             Origin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
-            Position = Vector2.Zero;
+            Position = new Vector2(0, 0);
         }
 
         public Vector2 Position { get; set; }
