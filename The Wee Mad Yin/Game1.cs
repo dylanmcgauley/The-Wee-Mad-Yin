@@ -35,6 +35,8 @@ namespace The_Wee_Mad_Yin
 
         sprite[] option_buttons = new sprite[3];
 
+        sprite back_button;
+
         Song[] background_music = new Song[7];
 
         Song main_music;
@@ -120,11 +122,13 @@ namespace The_Wee_Mad_Yin
             buttons[2] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 3/5 - screen_height / 10), 1);
             buttons[3] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 4/5 - screen_height / 10), 1);
 
+            back_button = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 17/20 - screen_height / 10), 1);
+
             option_buttons[0] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 1/4 - screen_height / 10), 1);
             option_buttons[1] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 1/2 - screen_height / 10), 1);
             option_buttons[2] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 3/4 - screen_height / 10), 1);
 
-            player_sprite = new sprite(Content, "Cactus", 0, screen_height - 50, 1);
+            player_sprite = new sprite(Content, "Cactus", 200, screen_height - 170, 0.2f);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
             //nessie_sprite = new sprite(Content, "", 100, screen_height - 50, 1);
 
@@ -190,6 +194,7 @@ namespace The_Wee_Mad_Yin
                 {
                     options = true;
                     menu = false;
+                    button_timercount = 0;
                 }
 
                 if ((mouse_box.Intersects(button_box4)) && (mouse.LeftButton == ButtonState.Pressed) && (button_timercount >= button_timer))
@@ -198,17 +203,26 @@ namespace The_Wee_Mad_Yin
                 }
             }
 
-            ////if (leaderboard == true)
-            ////{
+            if (leaderboard == true)
+            {
 
-            //      MediaPlayer.Play(main_music);
+                Rectangle back_box = new Rectangle((int)back_button.position.X, (int)back_button.position.Y, back_button.graphic.Width, back_button.graphic.Height);
 
-            ////    if (File.Exists(@"Gamehighscores.txt"))
-            ////    {
-            ////        StreamReader file = new StreamReader(@"Gamehighscores.txt");
+                if ((mouse_box.Intersects(back_box)) && (mouse.LeftButton == ButtonState.Pressed))
+                {
+                    menu = true;
+                    leaderboard = false;
+                    button_timercount = 0;
+                }
 
-            ////    }
-            ////}
+                //MediaPlayer.Play(main_music);
+
+                //if (File.Exists(@"Gamehighscores.txt"))
+                //{
+                //    StreamReader file = new StreamReader(@"Gamehighscores.txt");
+
+                //}
+            }
 
             if (options == true)
             {
@@ -227,7 +241,7 @@ namespace The_Wee_Mad_Yin
                     lives = 3;
                 }
 
-                if ((mouse_box.Intersects(option_box2)) && (mouse.LeftButton == ButtonState.Pressed))
+                if ((mouse_box.Intersects(option_box2)) && (mouse.LeftButton == ButtonState.Pressed) && (button_timercount >= button_timer))
                 {
                     lives = 1;
                 }
@@ -250,10 +264,11 @@ namespace The_Wee_Mad_Yin
                     player_sprite.position.X = 0;
                 }
 
-                if (player_sprite.position.X == 1600)
+                if (player_sprite.position.X == 1800)
                 {
                     player_camera.Position = new Vector2(0, 0);
-                    player_sprite.position.X = 0;
+                    player_sprite.position.X = 200;
+                    info_position = new Vector2(50, 20);
                     level_number += 1;
                 }
 
@@ -309,6 +324,7 @@ namespace The_Wee_Mad_Yin
             {
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
                 spriteBatch.DrawString(info, "High Scores", new Vector2 ((screen_width / 2) - (screen_width / 20), (screen_height * 1/4 - screen_height / 10)), Color.Red);
+                back_button.DrawRectangle(spriteBatch, screen_width / 5, screen_height / 5);
             }
 
             if (options == true)
@@ -328,7 +344,7 @@ namespace The_Wee_Mad_Yin
                     backgrounds[i].DrawRectangle(spriteBatch, 2400, 600);
                 }
 
-                    player_sprite.DrawNormal(spriteBatch);
+                    player_sprite.DrawScaled(spriteBatch);
 
                     if (level_number == 7)
                     {
@@ -336,8 +352,8 @@ namespace The_Wee_Mad_Yin
                         nessie_sprite.DrawNormal(spriteBatch);
                     }
 
-                    spriteBatch.DrawString(info, "Lives: " + lives, info_position, Color.White);
-                    spriteBatch.DrawString(info, "Score: " + score, new Vector2(info_position.X + 200, info_position.Y), Color.White);
+                    spriteBatch.DrawString(info, "Lives: " + lives, info_position, Color.Black);
+                    spriteBatch.DrawString(info, "Score: " + score, new Vector2(info_position.X + 200, info_position.Y), Color.Black);
             }
 
             foreach(Eagle x in eagles)
