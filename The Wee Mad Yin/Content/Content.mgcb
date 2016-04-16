@@ -85,3 +85,9 @@
 /processorParam:TextureFormat=Color
 /build:main_menu.jpg
 
+#begin main_music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:main_music.mp3
+

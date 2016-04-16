@@ -50,13 +50,15 @@ namespace The_Wee_Mad_Yin
         int screen_width = 800;
         int screen_height = 600;
 
-        int level_number = 0;
+        int level_number = 1;
 
         int lives = 3;
         int score = 0;
 
         const int button_timer = 1000;
         int button_timercount = 0;
+        const int life_cooldown = 2000;
+        int current_lcooldown = 0;
 
         bool menu = true;
         bool leaderboard = false;
@@ -181,7 +183,6 @@ namespace The_Wee_Mad_Yin
                 {
                     gameon = true;
                     menu = false;
-                    level_number = 1;
                 }
 
                 if((mouse_box.Intersects(button_box2)) && (mouse.LeftButton == ButtonState.Pressed))
@@ -258,10 +259,16 @@ namespace The_Wee_Mad_Yin
 
             if (gameon == true)
             {
+                Rectangle player_box = new Rectangle((int)player_sprite.position.X, (int)player_sprite.position.Y, player_sprite.graphic.Width, player_sprite.graphic.Height);
 
-                if (player_sprite.position.X < 0)
+                Eagle eagle_hit = null;
+                Haggis haggis_hit = null;
+                Shortbread shortbread_hit = null;
+                Thistle thistle_hit = null;
+
+                if (player_sprite.position.X < 200)
                 {
-                    player_sprite.position.X = 0;
+                    player_sprite.position.X = 200;
                 }
 
                 if (player_sprite.position.X == 1800)
@@ -270,21 +277,57 @@ namespace The_Wee_Mad_Yin
                     player_sprite.position.X = 200;
                     info_position = new Vector2(50, 20);
                     level_number += 1;
+                    score += 50;
                 }
 
-                if (controls.IsKeyDown(Keys.A) && player_sprite.position.X > 0)
+                if (controls.IsKeyDown(Keys.A) && player_sprite.position.X > 200)
                 {
                     player_sprite.position.X -= 1;
                     player_camera.Position -= new Vector2(1,0);
                     info_position.X -= 1;
-                    //level_number = 1;
                 }
                 if (controls.IsKeyDown(Keys.D) && player_sprite.position.X < 2000)
                 {
                     player_sprite.position.X += 1;
                     player_camera.Position += new Vector2(1, 0);
                     info_position.X += 1;
-                    //level_number = 2;
+                }
+
+                if (level_number == 1)
+                {
+                    Level_1();
+                }
+
+                foreach (Eagle x in eagles)
+                {
+                    Rectangle eagle_box = new Rectangle ((int)x.eagle_position.X, (int)x.eagle_position.Y, x.eagle_sprite.Width, x.eagle_sprite.Height);
+
+                    if(eagle_box.Intersects(player_box) && current_lcooldown >= life_cooldown)
+                    {
+                        lives -= 1;
+                        eagle_hit = x;
+                    }
+                }
+
+                foreach (Shortbread x in shortbreads)
+                {
+                    Rectangle sbread_box = new Rectangle((int)x.shortbread_position.X, (int)x.shortbread_position.Y, x.shortbread_sprite.Width, x.shortbread_sprite.Height);
+
+                    if (sbread_box.Intersects(player_box))
+                    {
+                        shortbread_hit = x;
+                    }
+                }
+
+                if (shortbread_hit != null)
+                {
+                    score += 10;
+                    shortbreads.Remove(shortbread_hit);
+                }
+
+                if (haggis_hit != null)
+                {
+                    haggises.Remove(haggis_hit);
                 }
 
                 //for (int i = 0; i < level_number; i++)
@@ -354,31 +397,31 @@ namespace The_Wee_Mad_Yin
 
                     spriteBatch.DrawString(info, "Lives: " + lives, info_position, Color.Black);
                     spriteBatch.DrawString(info, "Score: " + score, new Vector2(info_position.X + 200, info_position.Y), Color.Black);
-            }
 
-            foreach(Eagle x in eagles)
-            {
-                x.Draw_Eagle(spriteBatch);
-            }
+                    foreach (Eagle x in eagles)
+                    {
+                        x.Draw_Eagle(spriteBatch);
+                    }
 
-            foreach(Haggis x in haggises)
-            {
-                x.Draw_Haggis(spriteBatch);
-            }
+                    foreach (Haggis x in haggises)
+                    {
+                        x.Draw_Haggis(spriteBatch);
+                    }
 
-            foreach(Shortbread x in shortbreads)
-            {
-                x.Draw_Shortbread(spriteBatch);
-            }
+                    foreach (Shortbread x in shortbreads)
+                    {
+                        x.Draw_Shortbread(spriteBatch);
+                    }
 
-            foreach(Thistle x in thistles)
-            {
-                x.Draw_Thistle(spriteBatch);
-            }
+                    foreach (Thistle x in thistles)
+                    {
+                        x.Draw_Thistle(spriteBatch);
+                    }
 
-            foreach(Block x in blocks)
-            {
-                x.Draw_Block(spriteBatch);
+                    foreach (Block x in blocks)
+                    {
+                        x.Draw_Block(spriteBatch);
+                    }
             }
 
             spriteBatch.End(); 
