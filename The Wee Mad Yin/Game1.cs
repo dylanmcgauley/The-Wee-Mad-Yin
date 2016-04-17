@@ -55,7 +55,7 @@ namespace The_Wee_Mad_Yin
         int lives = 3;
         int score = 0;
 
-        const int button_timer = 1000;
+        const int button_timer = 500;
         int button_timercount = 0;
         const int life_cooldown = 2000;
         int current_lcooldown = 0;
@@ -119,16 +119,16 @@ namespace The_Wee_Mad_Yin
             //background_music[6] = Content.Load<Song>("");
 
 
-            buttons[0] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 1/5 - screen_height / 10), 1);
-            buttons[1] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 2/5 - screen_height / 10), 1);
-            buttons[2] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 3/5 - screen_height / 10), 1);
-            buttons[3] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 4/5 - screen_height / 10), 1);
+            buttons[0] = new sprite(Content, "button_play", (screen_width * 3/8), (screen_height * 1/5 - 30), 1);
+            buttons[1] = new sprite(Content, "button_leaderboard", (screen_width * 3/8), (screen_height * 2 / 5 - 30), 1);
+            buttons[2] = new sprite(Content, "button_options", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
+            buttons[3] = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
 
-            back_button = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 17/20 - screen_height / 10), 1);
+            back_button = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
-            option_buttons[0] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 1/4 - screen_height / 10), 1);
-            option_buttons[1] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 1/2 - screen_height / 10), 1);
-            option_buttons[2] = new sprite(Content, "Button", (screen_width / 2) - (screen_width / 10), (screen_height * 3/4 - screen_height / 10), 1);
+            option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
+            option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
+            option_buttons[2] = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
 
             player_sprite = new sprite(Content, "Cactus", 200, screen_height - 170, 0.2f);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
@@ -361,7 +361,7 @@ namespace The_Wee_Mad_Yin
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    buttons[i].DrawRectangle(spriteBatch, screen_width / 5, screen_height / 5);
+                    buttons[i].DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
                 }
             }
 
@@ -369,7 +369,7 @@ namespace The_Wee_Mad_Yin
             {
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
                 spriteBatch.DrawString(info, "High Scores", new Vector2 ((screen_width / 2) - (screen_width / 20), (screen_height * 1/4 - screen_height / 10)), Color.Red);
-                back_button.DrawRectangle(spriteBatch, screen_width / 5, screen_height / 5);
+                back_button.DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
             }
 
             if (options == true)
@@ -377,7 +377,7 @@ namespace The_Wee_Mad_Yin
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
                 for (int i = 0; i < option_buttons.Length; i++)
                 {
-                    option_buttons[i].DrawRectangle(spriteBatch, screen_width / 5, screen_height / 5);
+                    option_buttons[i].DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
                 }
             }
 
