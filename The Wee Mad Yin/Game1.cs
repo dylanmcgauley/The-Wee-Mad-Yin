@@ -171,6 +171,7 @@ namespace The_Wee_Mad_Yin
 
             if(menu == true)
             {
+                player_camera.Position = new Vector2(0, 0);
                 IsMouseVisible = true;
                 Rectangle button_box1 = new Rectangle((int)buttons[0].position.X, (int)buttons[0].position.Y, buttons[0].graphic.Width, buttons[0].graphic.Height);
                 Rectangle button_box2 = new Rectangle((int)buttons[1].position.X, (int)buttons[1].position.Y, buttons[1].graphic.Width, buttons[1].graphic.Height);
@@ -259,6 +260,7 @@ namespace The_Wee_Mad_Yin
 
             if (gameon == true)
             {
+                player_camera.Position = new Vector2(player_sprite.position.X - 200, 0);
                 Rectangle player_box = new Rectangle((int)player_sprite.position.X, (int)player_sprite.position.Y, player_sprite.graphic.Width, player_sprite.graphic.Height);
 
                 Eagle eagle_hit = null;
