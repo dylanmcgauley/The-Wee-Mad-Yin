@@ -32,10 +32,13 @@ namespace The_Wee_Mad_Yin
         sprite[] backgrounds = new sprite[7];
 
         sprite[] buttons = new sprite[4];
+        sprite[] buttons_selected = new sprite[4];
 
         sprite[] option_buttons = new sprite[3];
+        sprite[] options_selected = new sprite[3];
 
         sprite back_button;
+        sprite back_selected;
 
         Song[] background_music = new Song[7];
 
@@ -51,6 +54,8 @@ namespace The_Wee_Mad_Yin
         int screen_height = 600;
 
         int level_number = 1;
+        float gravity = 0.5f;
+        int current_time;
 
         int lives = 3;
         int score = 0;
@@ -59,6 +64,8 @@ namespace The_Wee_Mad_Yin
         int button_timercount = 0;
         const int life_cooldown = 2000;
         int current_lcooldown = 0;
+        const int jump_timer = 1000;
+        int jump_current = 0;
 
         bool menu = true;
         bool leaderboard = false;
@@ -123,14 +130,22 @@ namespace The_Wee_Mad_Yin
             buttons[1] = new sprite(Content, "button_leaderboard", (screen_width * 3/8), (screen_height * 2 / 5 - 30), 1);
             buttons[2] = new sprite(Content, "button_options", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
             buttons[3] = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
+            //buttons_selected[0] = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 1 / 5 - 30), 1);
+            //buttons_selected[1] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 2 / 5 - 30), 1);
+            //buttons_selected[2] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
+            //buttons_selected[3] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
 
             back_button = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
+            //back_selected = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
             option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
             option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
             option_buttons[2] = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
+            //options_selected[0] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
+            //options_selected[1] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
+            //options_selected[2] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
 
-            player_sprite = new sprite(Content, "Cactus", 200, screen_height - 170, 0.2f);
+            player_sprite = new sprite(Content, "Cactus", 200, screen_height - 300, 0.2f);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
             //nessie_sprite = new sprite(Content, "", 100, screen_height - 50, 1);
 
@@ -162,12 +177,13 @@ namespace The_Wee_Mad_Yin
                 leaderboard = false;
                 menu = true;
             }
-
+            current_time = gameTime.ElapsedGameTime.Milliseconds;
+            var controller = GamePad.GetState(PlayerIndex.One);
             var controls = Keyboard.GetState();
             var mouse = Mouse.GetState();
             
             Rectangle mouse_box = new Rectangle((int)mouse.X,(int)mouse.Y, 1, 1);
-            button_timercount += gameTime.ElapsedGameTime.Milliseconds;
+            button_timercount += current_time;
 
             if(menu == true)
             {
@@ -260,6 +276,7 @@ namespace The_Wee_Mad_Yin
 
             if (gameon == true)
             {
+                IsMouseVisible = false;
                 player_camera.Position = new Vector2(player_sprite.position.X - 200, 0);
                 Rectangle player_box = new Rectangle((int)player_sprite.position.X, (int)player_sprite.position.Y, player_sprite.graphic.Width, player_sprite.graphic.Height);
 
@@ -268,12 +285,16 @@ namespace The_Wee_Mad_Yin
                 Shortbread shortbread_hit = null;
                 Thistle thistle_hit = null;
 
+                player_sprite.position.Y += gravity * current_time;
+
                 if (player_sprite.position.X < 200)
                 {
                     player_sprite.position.X = 200;
+                    player_camera.Position = new Vector2 (0,0);
+                    info_position.X = 50;
                 }
 
-                if (player_sprite.position.X == 1800)
+                if (player_sprite.position.X > 1800)
                 {
                     player_camera.Position = new Vector2(0, 0);
                     player_sprite.position.X = 200;
@@ -282,17 +303,32 @@ namespace The_Wee_Mad_Yin
                     score += 50;
                 }
 
-                if (controls.IsKeyDown(Keys.A) && player_sprite.position.X > 200)
+                if (player_sprite.position.Y > 400)
                 {
-                    player_sprite.position.X -= 1;
-                    player_camera.Position -= new Vector2(1,0);
-                    info_position.X -= 1;
+                    gravity = 0;
+                    jump_current = 0;
                 }
-                if (controls.IsKeyDown(Keys.D) && player_sprite.position.X < 2000)
+                else
                 {
-                    player_sprite.position.X += 1;
-                    player_camera.Position += new Vector2(1, 0);
-                    info_position.X += 1;
+                    gravity = 0.5f;
+                }
+
+                if (controls.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
+                {
+                    player_sprite.position.Y -= 1.2f * current_time;
+                }
+
+                if (controls.IsKeyDown(Keys.A) || (controller.DPad.Left == ButtonState.Pressed) || (controller.ThumbSticks.Left.X < -0.1))
+                {
+                    player_sprite.position.X -= 1.5f;
+                    player_camera.Position -= new Vector2(1.5f,0);
+                    info_position.X -= 1.5f;
+                }
+                if (controls.IsKeyDown(Keys.D) || (controller.DPad.Right == ButtonState.Pressed) || (controller.ThumbSticks.Left.X > 0.1))
+                {
+                    player_sprite.position.X += 1.5f;
+                    player_camera.Position += new Vector2(1.5f, 0);
+                    info_position.X += 1.5f;
                 }
 
                 if (level_number == 1)
@@ -363,6 +399,22 @@ namespace The_Wee_Mad_Yin
                 {
                     buttons[i].DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
                 }
+                //if (mouse_box.Intersects(button_box1))
+                //{
+                //    buttons_selected[0].DrawRectangle(spriteBatch, buttons_selected[0].graphic.Width, buttons_selected[0].graphic.Height);
+                //}
+                //if (mouse_box.Intersects(button_box2))
+                //{
+                //    buttons_selected[1].DrawRectangle(spriteBatch, buttons_selected[2].graphic.Width, buttons_selected[2].graphic.Height);
+                //}
+                //if (mouse_box.Intersects(button_box3))
+                //{
+                //    buttons_selected[2].DrawRectangle(spriteBatch, buttons_selected[3].graphic.Width, buttons_selected[3].graphic.Height);
+                //}
+                //if (mouse_box.Intersects(button_box4))
+                //{
+                //    buttons_selected[3].DrawRectangle(spriteBatch, buttons_selected[4].graphic.Width, buttons_selected[4].graphic.Height);
+                //}
             }
 
             if (leaderboard == true)
