@@ -300,7 +300,7 @@ namespace The_Wee_Mad_Yin
                     player_sprite.position.X = 200;
                     info_position = new Vector2(50, 20);
                     level_number += 1;
-                    score += 50;
+                    score += 200;
                 }
 
                 if (player_sprite.position.Y < 0)
@@ -317,6 +317,21 @@ namespace The_Wee_Mad_Yin
                 {
                     gravity = 0.3f;
                 }
+
+                //foreach (Block x in blocks)
+                //{
+                //    Rectangle block_box = new Rectangle((int)x.block_position.X, (int)x.block_position.Y, (int)x.block_sprite.Width, (int)x.block_sprite.Height);
+
+                //    if (player_box.Intersects(block_box) && (player_sprite.position.Y + player_sprite.graphic.Height == x.block_position.Y))
+                //    {
+                //        gravity = 0;
+                //        jump_current = 0;
+                //    }
+                //    else
+                //    {
+                //        gravity = 0.3f;
+                //    }
+                //}
 
                 if (controls.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
                 {
@@ -354,6 +369,23 @@ namespace The_Wee_Mad_Yin
                     {
                         lives -= 1;
                         eagle_hit = x;
+                        current_lcooldown = 0;
+                    }
+                }
+
+                foreach (Haggis x in haggises)
+                {
+                    Rectangle haggis_box = new Rectangle((int)x.haggis_position.X, (int)x.haggis_position.Y, x.haggis_sprite.Width, x.haggis_sprite.Height);
+
+                    if(haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height == x.haggis_position.Y))
+                    {
+                        haggis_hit = x;
+                    }
+
+                    if (haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height != x.haggis_position.Y) && current_lcooldown >= life_cooldown)
+                    {
+                        lives--;
+                        current_lcooldown = 0;
                     }
                 }
 
@@ -369,12 +401,13 @@ namespace The_Wee_Mad_Yin
 
                 if (shortbread_hit != null)
                 {
-                    score += 10;
+                    score += 50;
                     shortbreads.Remove(shortbread_hit);
                 }
 
                 if (haggis_hit != null)
                 {
+                    score += 15;
                     haggises.Remove(haggis_hit);
                 }
 
