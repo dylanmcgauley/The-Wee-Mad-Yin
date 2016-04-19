@@ -54,7 +54,7 @@ namespace The_Wee_Mad_Yin
         int screen_height = 600;
 
         int level_number = 1;
-        float gravity = 0.5f;
+        float gravity = 0.3f;
         int current_time;
 
         int lives = 3;
@@ -64,7 +64,7 @@ namespace The_Wee_Mad_Yin
         int button_timercount = 0;
         const int life_cooldown = 2000;
         int current_lcooldown = 0;
-        const int jump_timer = 1000;
+        const int jump_timer = 300;
         int jump_current = 0;
 
         bool menu = true;
@@ -303,6 +303,11 @@ namespace The_Wee_Mad_Yin
                     score += 50;
                 }
 
+                if (player_sprite.position.Y < 0)
+                {
+                    player_sprite.position.Y = 0;
+                }
+
                 if (player_sprite.position.Y > 400)
                 {
                     gravity = 0;
@@ -310,12 +315,17 @@ namespace The_Wee_Mad_Yin
                 }
                 else
                 {
-                    gravity = 0.5f;
+                    gravity = 0.3f;
                 }
 
                 if (controls.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
                 {
-                    player_sprite.position.Y -= 1.2f * current_time;
+                    jump_current += current_time;
+
+                    if (jump_current <= jump_timer)
+                    {
+                        gravity = -0.25f;
+                    }
                 }
 
                 if (controls.IsKeyDown(Keys.A) || (controller.DPad.Left == ButtonState.Pressed) || (controller.ThumbSticks.Left.X < -0.1))
