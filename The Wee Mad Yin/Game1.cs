@@ -53,10 +53,11 @@ namespace The_Wee_Mad_Yin
         int screen_width = 800;
         int screen_height = 600;
 
-        int level_number = 1;
+        int level_number = 0;
         float gravity = 0.3f;
         int current_time;
 
+        int defaultlives = 3;
         int lives = 3;
         int score = 0;
 
@@ -130,20 +131,12 @@ namespace The_Wee_Mad_Yin
             buttons[1] = new sprite(Content, "button_leaderboard", (screen_width * 3/8), (screen_height * 2 / 5 - 30), 1);
             buttons[2] = new sprite(Content, "button_options", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
             buttons[3] = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
-            //buttons_selected[0] = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 1 / 5 - 30), 1);
-            //buttons_selected[1] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 2 / 5 - 30), 1);
-            //buttons_selected[2] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
-            //buttons_selected[3] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
 
             back_button = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
-            //back_selected = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
             option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
             option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
             option_buttons[2] = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
-            //options_selected[0] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
-            //options_selected[1] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
-            //options_selected[2] = new sprite(Content, "", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
 
             player_sprite = new sprite(Content, "Cactus", 200, screen_height - 300, 0.2f);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
@@ -196,18 +189,35 @@ namespace The_Wee_Mad_Yin
 
                 //MediaPlayer.Play(main_music);
 
+                //if((mouse_box.Intersects(button_box1)))
+                //{
+                //    buttons[0] = new sprite(Content, "play_selected", (screen_width * 3/8), (screen_height * 1/5 - 30), 1);
+                //}
                 if((mouse_box.Intersects(button_box1)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     gameon = true;
                     menu = false;
+
+                    level_number = 0;
+                    score = 0;
+                    lives = defaultlives;
+                    Load_Level();
                 }
 
+                //if((mouse_box.Intersects(button_box2)))
+                //{
+                //    buttons[1] = new sprite(Content, "leaderboard_selected", (screen_width * 3 / 8), (screen_height * 2 / 5 - 30), 1);
+                //}
                 if((mouse_box.Intersects(button_box2)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     leaderboard = true;
                     menu = false;
                 }
 
+                //if ((mouse_box.Intersects(button_box3)))
+                //{
+                //    buttons[2] = new sprite(Content, "options_selected", (screen_width * 3 / 8), (screen_height * 3 / 5 - 30), 1);
+                //}
                 if ((mouse_box.Intersects(button_box3)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     options = true;
@@ -215,17 +225,25 @@ namespace The_Wee_Mad_Yin
                     button_timercount = 0;
                 }
 
+                //if ((mouse_box.Intersects(button_box4)))
+                //{
+                //    buttons[3] = new sprite(Content, "exit_selected", (screen_width * 3 / 8), (screen_height * 4 / 5 - 30), 1);
+                //}
                 if ((mouse_box.Intersects(button_box4)) && (mouse.LeftButton == ButtonState.Pressed) && (button_timercount >= button_timer))
                 {
                     Exit();
                 }
             }
 
-            if (leaderboard == true)
+            else if (leaderboard == true)
             {
 
                 Rectangle back_box = new Rectangle((int)back_button.position.X, (int)back_button.position.Y, back_button.graphic.Width, back_button.graphic.Height);
 
+                //if ((mouse_box.Intersects(back_box)))
+                //{
+                //    back_button = new sprite(Content, "back_selected", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
+                //}
                 if ((mouse_box.Intersects(back_box)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     menu = true;
@@ -242,7 +260,7 @@ namespace The_Wee_Mad_Yin
                 //}
             }
 
-            if (options == true)
+            else if (options == true)
             {
                 IsMouseVisible = true;
                 Rectangle option_box1 = new Rectangle((int)option_buttons[0].position.X, (int)option_buttons[0].position.Y,
@@ -254,16 +272,28 @@ namespace The_Wee_Mad_Yin
 
                 //MediaPlayer.Play(main_music);
 
+                //if ((mouse_box.Intersects(option_box1)))
+                //{
+                //    option_buttons[0] = new sprite(Content, "easy_selected", (screen_width * 3 / 8), (screen_height * 1 / 4 - 30), 1);
+                //}
                 if ((mouse_box.Intersects(option_box1)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
-                    lives = 3;
+                    defaultlives = 3;
                 }
 
+                //if ((mouse_box.Intersects(option_box2)))
+                //{
+                //    option_buttons[1] = new sprite(Content, "hard_selected", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
+                //}
                 if ((mouse_box.Intersects(option_box2)) && (mouse.LeftButton == ButtonState.Pressed) && (button_timercount >= button_timer))
                 {
-                    lives = 1;
+                    defaultlives = 1;
                 }
 
+                //if ((mouse_box.Intersects(option_box3)))
+                //{
+                //    option_buttons[2] = new sprite(Content, "back_selected", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
+                //}
                 if ((mouse_box.Intersects(option_box3)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     menu = true;
@@ -274,7 +304,7 @@ namespace The_Wee_Mad_Yin
             }
 
 
-            if (gameon == true)
+            else if (gameon == true)
             {
                 IsMouseVisible = false;
                 player_camera.Position = new Vector2(player_sprite.position.X - 200, 0);
@@ -289,18 +319,26 @@ namespace The_Wee_Mad_Yin
 
                 if (player_sprite.position.X < 200)
                 {
-                    player_sprite.position.X = 200;
                     player_camera.Position = new Vector2 (0,0);
                     info_position.X = 50;
+                }
+                if (player_sprite.position.X < 0)
+                {
+                    player_sprite.position.X = 0;
                 }
 
                 if (player_sprite.position.X > 1800)
                 {
+                    player_camera.Position = new Vector2(1600, 0);
+                    info_position = new Vector2(1650, 20);
+                }
+                if (player_sprite.position.X > 2300)
+                {
                     player_camera.Position = new Vector2(0, 0);
                     player_sprite.position.X = 200;
                     info_position = new Vector2(50, 20);
-                    level_number += 1;
                     score += 200;
+                    Load_Level();
                 }
 
                 if (player_sprite.position.Y < 0)
@@ -349,16 +387,12 @@ namespace The_Wee_Mad_Yin
                     player_camera.Position -= new Vector2(1.5f,0);
                     info_position.X -= 1.5f;
                 }
+
                 if (controls.IsKeyDown(Keys.D) || (controller.DPad.Right == ButtonState.Pressed) || (controller.ThumbSticks.Left.X > 0.1))
                 {
                     player_sprite.position.X += 1.5f;
                     player_camera.Position += new Vector2(1.5f, 0);
                     info_position.X += 1.5f;
-                }
-
-                if (level_number == 1)
-                {
-                    Level_1();
                 }
 
                 foreach (Eagle x in eagles)
@@ -442,22 +476,6 @@ namespace The_Wee_Mad_Yin
                 {
                     buttons[i].DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
                 }
-                //if (mouse_box.Intersects(button_box1))
-                //{
-                //    buttons_selected[0].DrawRectangle(spriteBatch, buttons_selected[0].graphic.Width, buttons_selected[0].graphic.Height);
-                //}
-                //if (mouse_box.Intersects(button_box2))
-                //{
-                //    buttons_selected[1].DrawRectangle(spriteBatch, buttons_selected[2].graphic.Width, buttons_selected[2].graphic.Height);
-                //}
-                //if (mouse_box.Intersects(button_box3))
-                //{
-                //    buttons_selected[2].DrawRectangle(spriteBatch, buttons_selected[3].graphic.Width, buttons_selected[3].graphic.Height);
-                //}
-                //if (mouse_box.Intersects(button_box4))
-                //{
-                //    buttons_selected[3].DrawRectangle(spriteBatch, buttons_selected[4].graphic.Width, buttons_selected[4].graphic.Height);
-                //}
             }
 
             if (leaderboard == true)
@@ -525,9 +543,127 @@ namespace The_Wee_Mad_Yin
             base.Draw(gameTime);
         }
 
-        protected void Level_1()
+        protected void Load_Level()
         {
+            Clear();
+            level_number++;
 
+            if (level_number == 1)
+            {
+                for (int x = 0; x < 1; x++)
+                {
+                    Block blocks_17 = new Block(Content);
+                    blocks_17.block_position = new Vector2(1100 + x * 40, 240);
+                    blocks.Add(blocks_17);
+                }
+                for (int x = 0; x < 12; x++)
+                {
+                    Block blocks_1 = new Block(Content);
+                    Block blocks_2 = new Block(Content);
+                    Block blocks_5 = new Block(Content);
+                    Block blocks_6 = new Block(Content);
+                    Block blocks_7 = new Block(Content);
+                    blocks_1.block_position = new Vector2(20 + x * 40, 580);
+                    blocks_2.block_position = new Vector2(20 + x * 40, 540);
+                    blocks_5.block_position = new Vector2(580 + x * 40, 580);
+                    blocks_6.block_position = new Vector2(580 + x * 40, 540);
+                    blocks_7.block_position = new Vector2(580 + x * 40, 500);
+                    blocks.Add(blocks_1);
+                    blocks.Add(blocks_2);
+                    blocks.Add(blocks_5);
+                    blocks.Add(blocks_6);
+                    blocks.Add(blocks_7);
+                }
+                for (int x = 0; x < 2; x++)
+                {
+                    Block blocks_3 = new Block(Content);
+                    Block blocks_4 = new Block(Content);
+                    Block blocks_8 = new Block(Content);
+                    Block blocks_11 = new Block(Content);
+                    Block blocks_12 = new Block(Content);
+                    Block blocks_13 = new Block(Content);
+                    Block blocks_14 = new Block(Content);
+                    Block blocks_15 = new Block(Content);
+                    Block blocks_16 = new Block(Content);
+                    Block blocks_23 = new Block(Content);
+                    Block blocks_24 = new Block(Content);
+                    Block blocks_25 = new Block(Content);
+                    Block blocks_26 = new Block(Content);
+                    Block blocks_27 = new Block(Content);
+                    Block blocks_28 = new Block(Content);
+                    blocks_3.block_position = new Vector2(420 + x * 40, 500);
+                    blocks_4.block_position = new Vector2(420 + x * 40, 460);
+                    blocks_8.block_position = new Vector2(580 + x * 40, 460);
+                    blocks_11.block_position = new Vector2(1140 + x * 40, 580);
+                    blocks_12.block_position = new Vector2(1140 + x * 40, 540);
+                    blocks_13.block_position = new Vector2(1140 + x * 40, 500);
+                    blocks_14.block_position = new Vector2(1140 + x * 40, 460);
+                    blocks_15.block_position = new Vector2(1140 + x * 40, 420);
+                    blocks_16.block_position = new Vector2(980 + x * 40, 300);
+                    blocks_23.block_position = new Vector2(1620 + x * 40, 580);
+                    blocks_24.block_position = new Vector2(1620 + x * 40, 540);
+                    blocks_25.block_position = new Vector2(1620 + x * 40, 500);
+                    blocks_26.block_position = new Vector2(1620 + x * 40, 460);
+                    blocks_27.block_position = new Vector2(1620 + x * 40, 420);
+                    blocks_28.block_position = new Vector2(1620 + x * 40, 380);
+                    blocks.Add(blocks_3);
+                    blocks.Add(blocks_4);
+                    blocks.Add(blocks_8);
+                    blocks.Add(blocks_11);
+                    blocks.Add(blocks_12);
+                    blocks.Add(blocks_13);
+                    blocks.Add(blocks_14);
+                    blocks.Add(blocks_15);
+                    blocks.Add(blocks_16);
+                    blocks.Add(blocks_23);
+                    blocks.Add(blocks_24);
+                    blocks.Add(blocks_25);
+                    blocks.Add(blocks_26);
+                    blocks.Add(blocks_27);
+                    blocks.Add(blocks_28);
+                }
+                for (int x = 0; x < 4; x++)
+                {
+                    Block blocks_9 = new Block(Content);
+                    Block blocks_10 = new Block(Content);
+                    blocks_9.block_position = new Vector2(900 + x * 40, 460);
+                    blocks_10.block_position = new Vector2(900 + x * 40, 420);
+                    blocks.Add(blocks_9);
+                    blocks.Add(blocks_10);
+                }
+                for (int x = 0; x < 6; x++)
+                {
+                    Block blocks_18 = new Block(Content);
+                    Block blocks_19 = new Block(Content);
+                    Block blocks_20 = new Block(Content);
+                    Block blocks_21 = new Block(Content);
+                    Block blocks_22 = new Block(Content);
+                    blocks_18.block_position = new Vector2(1300 + x * 40, 580);
+                    blocks_19.block_position = new Vector2(1300 + x * 40, 540);
+                    blocks_20.block_position = new Vector2(1300 + x * 40, 500);
+                    blocks_21.block_position = new Vector2(1300 + x * 40, 460);
+                    blocks_22.block_position = new Vector2(1300 + x * 40, 420);
+                    blocks.Add(blocks_18);
+                    blocks.Add(blocks_19);
+                    blocks.Add(blocks_20);
+                    blocks.Add(blocks_21);
+                    blocks.Add(blocks_22);
+                }
+            }
+
+            else if (level_number == 2)
+            { 
+            
+            }
+        }
+
+        protected void Clear()
+        {
+            blocks.Clear();
+            haggises.Clear();
+            eagles.Clear();
+            thistles.Clear();
+            shortbreads.Clear();
         }
 
     }

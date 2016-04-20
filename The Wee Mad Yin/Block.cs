@@ -16,7 +16,7 @@ namespace The_Wee_Mad_Yin
 
         public Block(ContentManager content)
        {
-           //block_sprite = content.Load<Texture2D>("Block");
+           block_sprite = content.Load<Texture2D>("block");
        }
 
         public virtual void Draw_Block(SpriteBatch batch)
