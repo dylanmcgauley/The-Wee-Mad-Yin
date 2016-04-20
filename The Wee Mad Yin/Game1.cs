@@ -638,16 +638,40 @@ namespace The_Wee_Mad_Yin
                     Block blocks_20 = new Block(Content);
                     Block blocks_21 = new Block(Content);
                     Block blocks_22 = new Block(Content);
+                    Block blocks_29 = new Block(Content);
+                    Block blocks_30 = new Block(Content);
+                    Block blocks_31 = new Block(Content);
                     blocks_18.block_position = new Vector2(1300 + x * 40, 580);
                     blocks_19.block_position = new Vector2(1300 + x * 40, 540);
                     blocks_20.block_position = new Vector2(1300 + x * 40, 500);
                     blocks_21.block_position = new Vector2(1300 + x * 40, 460);
                     blocks_22.block_position = new Vector2(1300 + x * 40, 420);
+                    blocks_29.block_position = new Vector2(1780 + x * 40, 580);
+                    blocks_30.block_position = new Vector2(1780 + x * 40, 540);
+                    blocks_31.block_position = new Vector2(1780 + x * 40, 500);
                     blocks.Add(blocks_18);
                     blocks.Add(blocks_19);
                     blocks.Add(blocks_20);
                     blocks.Add(blocks_21);
                     blocks.Add(blocks_22);
+                    blocks.Add(blocks_29);
+                    blocks.Add(blocks_30);
+                    blocks.Add(blocks_31);
+                }
+                for (int x = 0; x < 10; x++)
+                {
+                    Block blocks_32 = new Block(Content);
+                    Block blocks_33 = new Block(Content);
+                    Block blocks_34 = new Block(Content);
+                    Block blocks_35 = new Block(Content);
+                    blocks_32.block_position = new Vector2(2100 + x * 40, 580);
+                    blocks_33.block_position = new Vector2(2100 + x * 40, 540);
+                    blocks_34.block_position = new Vector2(2100 + x * 40, 500);
+                    blocks_35.block_position = new Vector2(2100 + x * 40, 460);
+                    blocks.Add(blocks_32);
+                    blocks.Add(blocks_33);
+                    blocks.Add(blocks_34);
+                    blocks.Add(blocks_35);
                 }
             }
 
