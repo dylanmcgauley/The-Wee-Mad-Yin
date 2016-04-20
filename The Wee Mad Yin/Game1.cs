@@ -54,7 +54,7 @@ namespace The_Wee_Mad_Yin
         int screen_height = 600;
 
         int level_number = 0;
-        float gravity = 0.3f;
+        float gravity = 0.1f;
         int current_time;
 
         int defaultlives = 3;
@@ -138,7 +138,7 @@ namespace The_Wee_Mad_Yin
             option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 3 / 8), (screen_height * 1 / 2 - 30), 1);
             option_buttons[2] = new sprite(Content, "button_back", (screen_width * 3 / 8), (screen_height * 3 / 4 - 30), 1);
 
-            player_sprite = new sprite(Content, "Cactus", 200, screen_height - 300, 0.2f);
+            player_sprite = new sprite(Content, "player", 200, screen_height - 500, 1);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
             //nessie_sprite = new sprite(Content, "", 100, screen_height - 50, 1);
 
@@ -314,6 +314,7 @@ namespace The_Wee_Mad_Yin
                 Haggis haggis_hit = null;
                 Shortbread shortbread_hit = null;
                 Thistle thistle_hit = null;
+                Block block_hit = null;
 
                 player_sprite.position.Y += gravity * current_time;
 
@@ -346,30 +347,27 @@ namespace The_Wee_Mad_Yin
                     player_sprite.position.Y = 0;
                 }
 
-                if (player_sprite.position.Y > 400)
+                foreach (Block x in blocks)
                 {
-                    gravity = 0;
-                    jump_current = 0;
-                }
-                else
-                {
-                    gravity = 0.3f;
+                    x.block_box = new Rectangle((int)x.block_position.X, (int)x.block_position.Y, (int)x.block_sprite.Width, (int)x.block_sprite.Height);
+
+                    if (player_box.Intersects(x.block_box))
+                    {
+                        gravity = 0;
+                        jump_current = 0;
+                        block_hit = x;
+                    }
+                    //else
+                    //{
+                    //    gravity = 0.1f;
+                    //}
+
+                    //if (player_box.Intersects(x.block_box) && (player_sprite.position.X > x.block_position.X - player_sprite.graphic.Width))
+                    //{
+                    //    player_sprite.position.X = x.block_position.X - player_sprite.graphic.Width;
+                    //}
                 }
 
-                //foreach (Block x in blocks)
-                //{
-                //    Rectangle block_box = new Rectangle((int)x.block_position.X, (int)x.block_position.Y, (int)x.block_sprite.Width, (int)x.block_sprite.Height);
-
-                //    if (player_box.Intersects(block_box) && (player_sprite.position.Y + player_sprite.graphic.Height == x.block_position.Y))
-                //    {
-                //        gravity = 0;
-                //        jump_current = 0;
-                //    }
-                //    else
-                //    {
-                //        gravity = 0.3f;
-                //    }
-                //}
 
                 if (controls.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
                 {
@@ -397,9 +395,9 @@ namespace The_Wee_Mad_Yin
 
                 foreach (Eagle x in eagles)
                 {
-                    Rectangle eagle_box = new Rectangle ((int)x.eagle_position.X, (int)x.eagle_position.Y, x.eagle_sprite.Width, x.eagle_sprite.Height);
+                    x.eagle_box = new Rectangle ((int)x.eagle_position.X, (int)x.eagle_position.Y, x.eagle_sprite.Width, x.eagle_sprite.Height);
 
-                    if(eagle_box.Intersects(player_box) && current_lcooldown >= life_cooldown)
+                    if(x.eagle_box.Intersects(player_box) && current_lcooldown >= life_cooldown)
                     {
                         lives -= 1;
                         eagle_hit = x;
@@ -409,28 +407,46 @@ namespace The_Wee_Mad_Yin
 
                 foreach (Haggis x in haggises)
                 {
-                    Rectangle haggis_box = new Rectangle((int)x.haggis_position.X, (int)x.haggis_position.Y, x.haggis_sprite.Width, x.haggis_sprite.Height);
+                    x.haggis_box = new Rectangle((int)x.haggis_position.X, (int)x.haggis_position.Y, x.haggis_sprite.Width, x.haggis_sprite.Height);
 
-                    if(haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height == x.haggis_position.Y))
+                    x.haggis_position.X += x.haggis_velo * current_time;
+
+                    if(x.haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height == x.haggis_position.Y))
                     {
                         haggis_hit = x;
                     }
 
-                    if (haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height != x.haggis_position.Y) && current_lcooldown >= life_cooldown)
+                    if (x.haggis_box.Intersects(player_box) && (player_sprite.position.Y + player_sprite.graphic.Height != x.haggis_position.Y) && current_lcooldown >= life_cooldown)
                     {
                         lives--;
                         current_lcooldown = 0;
                     }
+
+                    foreach(Block b in blocks)
+                    {
+                        b.block_box = new Rectangle((int)b.block_position.X, (int)b.block_position.Y, (int)b.block_sprite.Width, (int)b.block_sprite.Height);
+
+                        if (x.haggis_box.Intersects(b.block_box))
+                        {
+                            x.haggis_velo *= -1;
+                        }
+                    }
+
                 }
 
                 foreach (Shortbread x in shortbreads)
                 {
-                    Rectangle sbread_box = new Rectangle((int)x.shortbread_position.X, (int)x.shortbread_position.Y, x.shortbread_sprite.Width, x.shortbread_sprite.Height);
+                    x.sbread_box = new Rectangle((int)x.shortbread_position.X, (int)x.shortbread_position.Y, x.shortbread_sprite.Width, x.shortbread_sprite.Height);
 
-                    if (sbread_box.Intersects(player_box))
+                    if (x.sbread_box.Intersects(player_box))
                     {
                         shortbread_hit = x;
                     }
+                }
+
+                foreach (Thistle x in thistles)
+                {
+                    x.thistle_box = new Rectangle((int)x.thistle_position.X, (int)x.thistle_position.Y, x.thistle_sprite.Width, x.thistle_sprite.Height);
                 }
 
                 if (shortbread_hit != null)
@@ -502,7 +518,7 @@ namespace The_Wee_Mad_Yin
                     backgrounds[i].DrawRectangle(spriteBatch, 2400, 600);
                 }
 
-                    player_sprite.DrawScaled(spriteBatch);
+                    player_sprite.DrawNormal(spriteBatch);
 
                     if (level_number == 7)
                     {

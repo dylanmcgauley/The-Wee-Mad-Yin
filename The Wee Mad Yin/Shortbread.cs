@@ -12,6 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D shortbread_sprite;
         public Vector2 shortbread_position;
+        public Rectangle sbread_box;
 
 
         public Shortbread(ContentManager content)

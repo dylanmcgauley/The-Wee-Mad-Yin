@@ -12,6 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D eagle_sprite;
         public Vector2 eagle_position;
+        public Rectangle eagle_box;
 
 
         public Eagle(ContentManager content)

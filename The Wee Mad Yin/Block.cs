@@ -12,6 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D block_sprite;
         public Vector2 block_position;
+        public Rectangle block_box;
 
 
         public Block(ContentManager content)

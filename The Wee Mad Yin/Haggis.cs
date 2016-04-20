@@ -12,6 +12,8 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D haggis_sprite;
         public Vector2 haggis_position;
+        public Rectangle haggis_box;
+        public float haggis_velo = 0.15f;
 
 
         public Haggis(ContentManager content)

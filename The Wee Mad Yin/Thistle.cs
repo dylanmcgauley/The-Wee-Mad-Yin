@@ -12,6 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D thistle_sprite;
         public Vector2 thistle_position;
+        public Rectangle thistle_box;
 
 
         public Thistle(ContentManager content)
