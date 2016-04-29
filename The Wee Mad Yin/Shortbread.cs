@@ -25,8 +25,6 @@ namespace The_Wee_Mad_Yin
             if (shortbread_sprite != null)
             {
                 Vector2 position = shortbread_position;
-                position.X -= shortbread_sprite.Width / 2;
-                position.Y -= shortbread_sprite.Height / 2;
                 batch.Draw(shortbread_sprite, position, Color.White);
             }
         }

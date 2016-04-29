@@ -12,6 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public Texture2D graphic;
         public Vector2 position;
+        public Vector2 velocity;
         Rectangle rectangle;
         float size;
 

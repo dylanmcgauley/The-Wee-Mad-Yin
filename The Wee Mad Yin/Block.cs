@@ -15,9 +15,9 @@ namespace The_Wee_Mad_Yin
         public Rectangle block_box;
 
 
-        public Block(ContentManager content)
+        public Block(ContentManager content, string type)
        {
-           block_sprite = content.Load<Texture2D>("block");
+           block_sprite = content.Load<Texture2D>(type);
        }
 
         public virtual void Draw_Block(SpriteBatch batch)
@@ -25,8 +25,6 @@ namespace The_Wee_Mad_Yin
             if (block_sprite != null)
             {
                 Vector2 position = block_position;
-                position.X -= block_sprite.Width / 2;
-                position.Y -= block_sprite.Height / 2;
                 batch.Draw(block_sprite, position, Color.White);
             }
         }

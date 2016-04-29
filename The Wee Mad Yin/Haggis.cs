@@ -18,7 +18,7 @@ namespace The_Wee_Mad_Yin
 
         public Haggis(ContentManager content)
        {
-           //haggis_sprite = content.Load<Texture2D>("Haggis");
+           haggis_sprite = content.Load<Texture2D>("haggis");
        }
 
         public virtual void Draw_Haggis(SpriteBatch batch)
@@ -26,8 +26,6 @@ namespace The_Wee_Mad_Yin
             if (haggis_sprite != null)
             {
                 Vector2 position = haggis_position;
-                position.X -= haggis_sprite.Width / 2;
-                position.Y -= haggis_sprite.Height / 2;
                 batch.Draw(haggis_sprite, position, Color.White);
             }
         }

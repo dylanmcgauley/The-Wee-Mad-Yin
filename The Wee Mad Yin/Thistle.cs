@@ -25,8 +25,6 @@ namespace The_Wee_Mad_Yin
             if (thistle_sprite != null)
             {
                 Vector2 position = thistle_position;
-                position.X -= thistle_sprite.Width / 2;
-                position.Y -= thistle_sprite.Height / 2;
                 batch.Draw(thistle_sprite, position, Color.White);
             }
         }
