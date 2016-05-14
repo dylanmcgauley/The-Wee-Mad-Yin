@@ -10,22 +10,25 @@ namespace The_Wee_Mad_Yin
 {
     class Thistle
     {
-        public Texture2D thistle_sprite;
-        public Vector2 thistle_position;
+        //public Texture2D thistle_sprite;
+        public sprite2 thistle_sprite;
+       // public Vector2 thistle_position;
         public Rectangle thistle_box;
 
 
         public Thistle(ContentManager content)
        {
            //thistle_sprite = content.Load<Texture2D>("Thistle");
-       }
+           thistle_sprite = new sprite2(content, "thistle_move", 100, 100, 3, 7, 0.2f);
+        }
 
         public virtual void Draw_Thistle(SpriteBatch batch)
         {
             if (thistle_sprite != null)
             {
-                Vector2 position = thistle_position;
-                batch.Draw(thistle_sprite, position, Color.White);
+                // Vector2 position = thistle_position;
+                thistle_sprite.DrawNormal(batch);
+                //batch.Draw(thistle_sprite, position, Color.White);
             }
         }
     }
