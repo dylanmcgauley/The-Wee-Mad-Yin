@@ -24,6 +24,8 @@ namespace The_Wee_Mad_Yin
 
         sprite background_main;
 
+        sprite background_gameover;
+
         sprite2 player_sprite;
 
         sprite gerard_sprite;
@@ -111,6 +113,7 @@ namespace The_Wee_Mad_Yin
             player_camera = new Camera(GraphicsDevice.Viewport);
 
             background_main = new sprite(Content, "main_menu", 0,0, 1);
+            background_gameover = new sprite(Content, "game_over", 0, 0, 1);
             backgrounds[0] = new sprite(Content, "background_blueclouds", 0, 0, 1);
             backgrounds[1] = new sprite(Content, "Background2", 0, 0, 1);
             backgrounds[2] = new sprite(Content, "Background2", 0, 0, 1);
@@ -135,7 +138,7 @@ namespace The_Wee_Mad_Yin
             buttons[3] = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 4 / 5 - 30), 1);
 
             back_button = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 17 / 20 - screen_height / 10), 1);
-            //restart_button = new sprite(Content, "restart_button", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
+            restart_button = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
             option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 2/3), (screen_height * 1 / 4 - 30), 1);
             option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 2/3), (screen_height * 1 / 2 - 30), 1);
@@ -402,7 +405,7 @@ namespace The_Wee_Mad_Yin
                 if (player_sprite.position.X > 2300)
                 {
                     player_camera.Position = new Vector2(0, 0);
-                    player_sprite.position.X = 200;
+                    player_sprite.position = new Vector2(200, screen_height - 200);
                     score += 200;
                     Load_Level();
                 }
@@ -723,23 +726,31 @@ namespace The_Wee_Mad_Yin
 
             else if (gameover == true)
             {
+                player_camera.Position = new Vector2(0, 0);
+                IsMouseVisible = true;
                 Rectangle restart_box = new Rectangle((int)restart_button.position.X, (int)restart_button.position.Y, restart_button.graphic.Width, restart_button.graphic.Height);
-                for (int i = 0; i < 9; i++)
-                {
-                if (score > highscores[i])
-                {
-                    var writer = new StreamWriter("Scores.txt");
+                //for (int i = 0; i < 9; i++)
+                //{
+                //if (score > highscores[i])
+                //{
+                //    var writer = new StreamWriter("Scores.txt");
 
-                    writer.Write(Convert.ToString(score));
+                //    writer.Write(Convert.ToString(score));
 
-                    writer.Close();
-                }
+                //    writer.Close();
+                //}
+                //}
+                if (mouse_box.Intersects(restart_box))
+                {
+
                 }
                 if (mouse_box.Intersects(restart_box) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     gameover = false;
                     gameon = true;
-                    level_number = 1;
+                    level_number = 0;
+                    Load_Level();
+                    player_sprite.position = new Vector2(200, screen_height - 200);
                     lives = defaultlives;
                     score = 0;
                 }
@@ -840,6 +851,13 @@ namespace The_Wee_Mad_Yin
                     }
             }
 
+            if (gameover == true)
+            {
+                background_gameover.DrawNormal(spriteBatch);
+
+                restart_button.DrawNormal(spriteBatch);
+            }
+
             spriteBatch.End();
 
             spriteBatch.Begin();
@@ -864,20 +882,14 @@ namespace The_Wee_Mad_Yin
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_17 = new Block(Content, "grass");
-                    Block blocks_40 = new Block(Content, "grass");
-                    Block blocks_41 = new Block(Content, "dirt");
                     Haggis haggis_1 = new Haggis(Content);
                     Eagle eagle_1 = new Eagle(Content);
                     Thistle thistle_1 = new Thistle(Content);
-                    blocks_17.block_position = new Vector2(1080, 240);
-                    blocks_40.block_position = new Vector2(1560, 340);
-                    blocks_41.block_position = new Vector2(1560, 380);
+                    blocks_17.block_position = new Vector2(1160, 200);
                     haggis_1.haggis_sprite.position = new Vector2(650, 470);
                     eagle_1.eagle_position = new Vector2(1710, 500);
                     thistle_1.thistle_sprite.position = new Vector2(1130, 332);
                     blocks.Add(blocks_17);
-                    blocks.Add(blocks_40);
-                    blocks.Add(blocks_41);
                     haggises.Add(haggis_1);
                     eagles.Add(eagle_1);
                     thistles.Add(thistle_1);
@@ -928,7 +940,7 @@ namespace The_Wee_Mad_Yin
                         blocks_13.block_position = new Vector2(1120 + x * 40, 500);
                         blocks_14.block_position = new Vector2(1120 + x * 40, 460);
                         blocks_15.block_position = new Vector2(1120 + x * 40, 420);
-                        blocks_16.block_position = new Vector2(960 + x * 40, 300);
+                        blocks_16.block_position = new Vector2(960 + x * 40, 280);
                         blocks_23.block_position = new Vector2(1600 + x * 40, 580);
                         blocks_24.block_position = new Vector2(1600 + x * 40, 540);
                         blocks_25.block_position = new Vector2(1600 + x * 40, 500);

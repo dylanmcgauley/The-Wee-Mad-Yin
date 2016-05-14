@@ -30,9 +30,6 @@ namespace The_Wee_Mad_Yin
         public void update(float gtime)
         {
             sprite_animation.framespersecond = (int)Math.Round(Math.Abs(velocity.X * fpsfactor), 0);
-  
-            // Pause the animation is the sprite stops moving
-            //spriteanimation[state].paused = (Math.Round(velocity.X, 1) == 0);
 
             sprite_animation.position.X = position.X;
             sprite_animation.position.Y = position.Y;
@@ -43,29 +40,7 @@ namespace The_Wee_Mad_Yin
         public void DrawNormal(SpriteBatch batch)
         {
             sprite_animation.drawme(batch);
-
-//            batch.Draw(graphic, position, Color.White);
         }
-
-       // public void DrawScaled(SpriteBatch batch)
-        //{
-      //      rectangle.X = (int)position.X;
-    //        rectangle.Y = (int)position.Y;
-//            rectangle.Width = (int)(graphic.Width * size);
-//            rectangle.Height = (int)(graphic.Height * size);
- //           batch.Draw(graphic, rectangle, Color.White);
-  //      }
-
-
-  //      public void DrawRectangle(SpriteBatch batch, int width, int height)
-  //      {
-      //      rectangle.X = (int)position.X;
-    //        rectangle.Y = (int)position.Y;
-        //    rectangle.Width = width;
-       //     rectangle.Height = height;
-      //      batch.Draw(graphic, rectangle, Color.White);
-     //   }
-
     }
 
 
