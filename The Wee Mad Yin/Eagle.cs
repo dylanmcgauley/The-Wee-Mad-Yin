@@ -13,12 +13,12 @@ namespace The_Wee_Mad_Yin
         public Texture2D eagle_sprite;
         public Vector2 eagle_position;
         public Rectangle eagle_box;
-        public float eagle_velo = 0.15f;
+        public float eagle_velo = 0.25f;
 
 
         public Eagle(ContentManager content)
        {
-            eagle_sprite = content.Load<Texture2D>("haggis");
+            eagle_sprite = content.Load<Texture2D>("eagle");
         }
 
         public virtual void Draw_Eagle(SpriteBatch batch)

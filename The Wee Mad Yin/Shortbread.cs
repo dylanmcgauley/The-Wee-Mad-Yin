@@ -17,7 +17,7 @@ namespace The_Wee_Mad_Yin
 
         public Shortbread(ContentManager content)
        {
-           //shortbread_sprite = content.Load<Texture2D>("Shortbread");
+           shortbread_sprite = content.Load<Texture2D>("shortbread");
        }
 
         public virtual void Draw_Shortbread(SpriteBatch batch)

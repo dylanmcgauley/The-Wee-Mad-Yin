@@ -12,8 +12,7 @@ namespace The_Wee_Mad_Yin
     {
         public sprite2 haggis_sprite;
         public Rectangle haggis_box;
-        public float haggis_velo = 0.15f;
-
+        public float haggis_velo = 0.2f;
 
         public Haggis(ContentManager content)
        {

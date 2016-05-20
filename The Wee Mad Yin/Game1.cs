@@ -63,7 +63,7 @@ namespace The_Wee_Mad_Yin
 
         int defaultlives = 3;
         int lives = 3;
-        int score = 0;
+        float score = 0;
 
         const int button_timer = 500;
         int button_timercount = 0;
@@ -77,6 +77,7 @@ namespace The_Wee_Mad_Yin
         bool gameover = false;
         bool jump = false;
         bool hard = false;
+        bool speedup = false;
 
         public Game1()
         {
@@ -117,10 +118,10 @@ namespace The_Wee_Mad_Yin
             background_gameover = new sprite(Content, "game_over", 0, 0, 1);
             backgrounds[0] = new sprite(Content, "background_blueclouds", 0, 0, 1);
             backgrounds[1] = new sprite(Content, "background_blueclouds", 0, 0, 1);
-            backgrounds[2] = new sprite(Content, "Background2", 0, 0, 1);
-            backgrounds[3] = new sprite(Content, "Background2", 0, 0, 1);
-            backgrounds[4] = new sprite(Content, "Background2", 0, 0, 1);
-            backgrounds[5] = new sprite(Content, "Background2", 0, 0, 1);
+            backgrounds[2] = new sprite(Content, "background_cave", 0, 0, 1);
+            backgrounds[3] = new sprite(Content, "background_cave", 0, 0, 1);
+            backgrounds[4] = new sprite(Content, "background_city", 0, 0, 1);
+            backgrounds[5] = new sprite(Content, "background_city", 0, 0, 1);
             backgrounds[6] = new sprite(Content, "Background2", 0, 0, 1);
 
             //main_music = Content.Load<Song>("");
@@ -139,7 +140,7 @@ namespace The_Wee_Mad_Yin
             buttons[3] = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 4 / 5 - 30), 1);
 
             back_button = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 17 / 20 - screen_height / 10), 1);
-            restart_button = new sprite(Content, "button_exit", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
+            restart_button = new sprite(Content, "button_restart", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
             option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 2/3), (screen_height * 1 / 4 - 30), 1);
             option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 2/3), (screen_height * 1 / 2 - 30), 1);
@@ -243,10 +244,11 @@ namespace The_Wee_Mad_Yin
                 {
                     gameon = true;
                     menu = false;
-
-                    level_number = 1;
+                    player_sprite.position = new Vector2(200, screen_height - 200);
+                    level_number = 3;
                     score = 0;
                     lives = defaultlives;
+
                     Load_Level();
                 }
 
@@ -346,6 +348,7 @@ namespace The_Wee_Mad_Yin
                 {
                     defaultlives = 3;
                     hard = false;
+                    speedup = false;
                 }
 
                 if ((mouse_box.Intersects(option_box2)))
@@ -360,6 +363,7 @@ namespace The_Wee_Mad_Yin
                 {
                     defaultlives = 1;
                     hard = true;
+                    speedup = true;
                 }
 
                 if ((mouse_box.Intersects(option_box3)))
@@ -411,6 +415,10 @@ namespace The_Wee_Mad_Yin
                     player_sprite.position = new Vector2(200, screen_height - 200);
                     score += 200;
                     Load_Level();
+                    if (hard == true)
+                    {
+                        speedup = true;
+                    }
                 }
 
                 //if (player_sprite.position.Y < 0)
@@ -611,10 +619,11 @@ namespace The_Wee_Mad_Yin
                     x.haggis_box = new Rectangle((int)x.haggis_sprite.position.X, (int)x.haggis_sprite.position.Y, x.haggis_sprite.sprite_animation.rect.Width, x.haggis_sprite.sprite_animation.rect.Height);
                     x.haggis_sprite.velocity.X = 2;
 
-                    //if (hard == true)
-                    //{
-                    //    x.haggis_velo = 0.2f;
-                    //}
+              //      if (speedup == true)
+                //    {
+                  //      x.haggis_velo = 0.6f;
+                    //    speedup = false;
+                  //  }
 
                     x.haggis_sprite.position.X += x.haggis_velo * current_time;
 
@@ -639,15 +648,15 @@ namespace The_Wee_Mad_Yin
 
                         if (x.haggis_box.Intersects(b.block_box) && (x.haggis_sprite.position.X < b.block_position.X))
                         {
-                            x.haggis_sprite.position.X = b.block_position.X - x.haggis_sprite.sprite_animation.rect.Width - 5;
                             x.haggis_velo *= -1;
+                            x.haggis_sprite.position.X = b.block_position.X - x.haggis_sprite.sprite_animation.rect.Width - 5;
                             x.haggis_sprite.sprite_animation.fliphorizontal = false;
                         }
                         if (x.haggis_box.Intersects(b.block_box) && (x.haggis_sprite.position.X > b.block_position.X))
                         {
+                            x.haggis_velo *= -1;
                             x.haggis_sprite.position.X = b.block_position.X + b.block_sprite.Width + 5;
                             x.haggis_sprite.sprite_animation.fliphorizontal = true;
-                            x.haggis_velo *= -1;
                         }
                     }
 
@@ -699,7 +708,7 @@ namespace The_Wee_Mad_Yin
                     else if (player_box.Intersects(x.thistle_box) && (player_sprite.position.Y < x.thistle_sprite.position.Y))
                     {
                         jump = true;
-                        player_sprite.velocity.Y -= 20;
+                        player_sprite.velocity.Y -= 60;
                         if ((player_sprite.position.Y - (x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height) > 6))
                         {
                             player_sprite.position.Y = x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height;
@@ -709,7 +718,7 @@ namespace The_Wee_Mad_Yin
                             lives--;
                             current_lcooldown = 0;
                         }
-                        thistle_hit = x;
+                        //thistle_hit = x;
                     }
                 }
 
@@ -766,11 +775,17 @@ namespace The_Wee_Mad_Yin
                 //} 
                 if (hard == true)
                 {
-                    score = score + 1000;
+                        score *= 1.3f;
+                    hard = false;
+                    speedup = false;
                 }
                 if (mouse_box.Intersects(restart_box))
                 {
-
+                    restart_button = new sprite(Content, "restart_selected", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
+                }
+                else
+                {
+                    restart_button = new sprite(Content, "button_restart", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
                 }
                 if (mouse_box.Intersects(restart_box) && (mouse.LeftButton == ButtonState.Pressed))
                 {
@@ -779,6 +794,7 @@ namespace The_Wee_Mad_Yin
                     level_number = 0;
                     Load_Level();
                     player_sprite.position = new Vector2(200, screen_height - 200);
+                    defaultlives = 3;
                     lives = defaultlives;
                     score = 0;
                 }
@@ -884,6 +900,8 @@ namespace The_Wee_Mad_Yin
                 background_gameover.DrawNormal(spriteBatch);
 
                 restart_button.DrawNormal(spriteBatch);
+
+                spriteBatch.DrawString(info,"Your Score:    " + score, new Vector2(340, 300), Color.Black);
             }
 
             spriteBatch.End();
@@ -915,7 +933,7 @@ namespace The_Wee_Mad_Yin
                     Thistle thistle_1 = new Thistle(Content);
                     blocks_17.block_position = new Vector2(1160, 200);
                     haggis_1.haggis_sprite.position = new Vector2(650, 470);
-                    eagle_1.eagle_position = new Vector2(1710, 500);
+                    eagle_1.eagle_position = new Vector2(1685, 500);
                     thistle_1.thistle_sprite.position = new Vector2(1130, 332);
                     blocks.Add(blocks_17);
                     haggises.Add(haggis_1);
@@ -940,60 +958,60 @@ namespace The_Wee_Mad_Yin
                     blocks_38.block_position = new Vector2(0 + x * 40, 540);
                     blocks.Add(blocks_38);
                 }
-                    for (int x = 0; x < 2; x++)
-                    {
-                        Block blocks_3 = new Block(Content, "dirt");
-                        Block blocks_4 = new Block(Content, "grass");
-                        Block blocks_7 = new Block(Content, "dirt");
-                        Block blocks_8 = new Block(Content, "grass");
-                        Block blocks_11 = new Block(Content, "dirt");
-                        Block blocks_12 = new Block(Content, "dirt");
-                        Block blocks_13 = new Block(Content, "dirt");
-                        Block blocks_14 = new Block(Content, "dirt");
-                        Block blocks_15 = new Block(Content, "grass");
-                        Block blocks_16 = new Block(Content, "grass");
-                        Block blocks_23 = new Block(Content, "dirt");
-                        Block blocks_24 = new Block(Content, "dirt");
-                        Block blocks_25 = new Block(Content, "dirt");
-                        Block blocks_26 = new Block(Content, "dirt");
-                        Block blocks_27 = new Block(Content, "dirt");
-                        Block blocks_28 = new Block(Content, "grass");
-                        Block blocks_39 = new Block(Content, "dirt");
-                        blocks_3.block_position = new Vector2(400 + x * 40, 500);
-                        blocks_4.block_position = new Vector2(400 + x * 40, 460);
-                        blocks_7.block_position = new Vector2(560 + x * 40, 500);
-                        blocks_8.block_position = new Vector2(560 + x * 40, 460);
-                        blocks_11.block_position = new Vector2(1120 + x * 40, 580);
-                        blocks_12.block_position = new Vector2(1120 + x * 40, 540);
-                        blocks_13.block_position = new Vector2(1120 + x * 40, 500);
-                        blocks_14.block_position = new Vector2(1120 + x * 40, 460);
-                        blocks_15.block_position = new Vector2(1120 + x * 40, 420);
-                        blocks_16.block_position = new Vector2(960 + x * 40, 280);
-                        blocks_23.block_position = new Vector2(1600 + x * 40, 580);
-                        blocks_24.block_position = new Vector2(1600 + x * 40, 540);
-                        blocks_25.block_position = new Vector2(1600 + x * 40, 500);
-                        blocks_26.block_position = new Vector2(1600 + x * 40, 460);
-                        blocks_27.block_position = new Vector2(1600 + x * 40, 420);
-                        blocks_28.block_position = new Vector2(1600 + x * 40, 380);
-                        blocks_39.block_position = new Vector2(400 + x * 40, 540);
-                        blocks.Add(blocks_3);
-                        blocks.Add(blocks_4);
-                        blocks.Add(blocks_7);
-                        blocks.Add(blocks_8);
-                        blocks.Add(blocks_11);
-                        blocks.Add(blocks_12);
-                        blocks.Add(blocks_13);
-                        blocks.Add(blocks_14);
-                        blocks.Add(blocks_15);
-                        blocks.Add(blocks_16);
-                        blocks.Add(blocks_23);
-                        blocks.Add(blocks_24);
-                        blocks.Add(blocks_25);
-                        blocks.Add(blocks_26);
-                        blocks.Add(blocks_27);
-                        blocks.Add(blocks_28);
-                        blocks.Add(blocks_39);
-                    }
+                for (int x = 0; x < 2; x++)
+                {
+                    Block blocks_3 = new Block(Content, "dirt");
+                    Block blocks_4 = new Block(Content, "grass");
+                    Block blocks_7 = new Block(Content, "dirt");
+                    Block blocks_8 = new Block(Content, "grass");
+                    Block blocks_11 = new Block(Content, "dirt");
+                    Block blocks_12 = new Block(Content, "dirt");
+                    Block blocks_13 = new Block(Content, "dirt");
+                    Block blocks_14 = new Block(Content, "dirt");
+                    Block blocks_15 = new Block(Content, "grass");
+                    Block blocks_16 = new Block(Content, "grass");
+                    Block blocks_23 = new Block(Content, "dirt");
+                    Block blocks_24 = new Block(Content, "dirt");
+                    Block blocks_25 = new Block(Content, "dirt");
+                    Block blocks_26 = new Block(Content, "dirt");
+                    Block blocks_27 = new Block(Content, "dirt");
+                    Block blocks_28 = new Block(Content, "grass");
+                    Block blocks_39 = new Block(Content, "dirt");
+                    blocks_3.block_position = new Vector2(400 + x * 40, 500);
+                    blocks_4.block_position = new Vector2(400 + x * 40, 460);
+                    blocks_7.block_position = new Vector2(560 + x * 40, 500);
+                    blocks_8.block_position = new Vector2(560 + x * 40, 460);
+                    blocks_11.block_position = new Vector2(1120 + x * 40, 580);
+                    blocks_12.block_position = new Vector2(1120 + x * 40, 540);
+                    blocks_13.block_position = new Vector2(1120 + x * 40, 500);
+                    blocks_14.block_position = new Vector2(1120 + x * 40, 460);
+                    blocks_15.block_position = new Vector2(1120 + x * 40, 420);
+                    blocks_16.block_position = new Vector2(960 + x * 40, 280);
+                    blocks_23.block_position = new Vector2(1600 + x * 40, 580);
+                    blocks_24.block_position = new Vector2(1600 + x * 40, 540);
+                    blocks_25.block_position = new Vector2(1600 + x * 40, 500);
+                    blocks_26.block_position = new Vector2(1600 + x * 40, 460);
+                    blocks_27.block_position = new Vector2(1600 + x * 40, 420);
+                    blocks_28.block_position = new Vector2(1600 + x * 40, 380);
+                    blocks_39.block_position = new Vector2(400 + x * 40, 540);
+                    blocks.Add(blocks_3);
+                    blocks.Add(blocks_4);
+                    blocks.Add(blocks_7);
+                    blocks.Add(blocks_8);
+                    blocks.Add(blocks_11);
+                    blocks.Add(blocks_12);
+                    blocks.Add(blocks_13);
+                    blocks.Add(blocks_14);
+                    blocks.Add(blocks_15);
+                    blocks.Add(blocks_16);
+                    blocks.Add(blocks_23);
+                    blocks.Add(blocks_24);
+                    blocks.Add(blocks_25);
+                    blocks.Add(blocks_26);
+                    blocks.Add(blocks_27);
+                    blocks.Add(blocks_28);
+                    blocks.Add(blocks_39);
+                }
                 for (int x = 0; x < 4; x++)
                 {
                     Block blocks_9 = new Block(Content, "dirt");
@@ -1054,7 +1072,7 @@ namespace The_Wee_Mad_Yin
             }
 
             else if (level_number == 2)
-            { 
+            {
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_3 = new Block(Content, "grass");
@@ -1069,12 +1087,12 @@ namespace The_Wee_Mad_Yin
                     blocks_3.block_position = new Vector2(280, 350);
                     blocks_11.block_position = new Vector2(480, 520);
                     blocks_14.block_position = new Vector2(480, 260);
-                    eagle_1.eagle_position = new Vector2(410, 20);
-                    eagle_2.eagle_position = new Vector2(570, 550);
+                    eagle_1.eagle_position = new Vector2(385, 20);
+                    eagle_2.eagle_position = new Vector2(545, 550);
                     haggis_1.haggis_sprite.position = new Vector2(730, 490);
                     haggis_2.haggis_sprite.position = new Vector2(1020, 490);
                     thistle_1.thistle_sprite.position = new Vector2(860, 142);
-                    thistle_2.thistle_sprite.position = new Vector2(1480, 472);
+                    thistle_2.thistle_sprite.position = new Vector2(1475, 472);
                     blocks.Add(blocks_3);
                     blocks.Add(blocks_11);
                     blocks.Add(blocks_14);
@@ -1114,7 +1132,14 @@ namespace The_Wee_Mad_Yin
                     blocks.Add(blocks_22);
                 }
 
-                for (int x = 0; x < 4; x ++)
+                for (int x = 0; x < 3; x++)
+                {
+                    Block blocks_23 = new Block(Content, "grass");
+                    blocks_23.block_position = new Vector2(1860 + x * 40, 480);
+                    blocks.Add(blocks_23);
+                }
+
+                for (int x = 0; x < 4; x++)
                 {
                     Block blocks_20 = new Block(Content, "grass");
                     Block blocks_21 = new Block(Content, "grass");
@@ -1124,7 +1149,7 @@ namespace The_Wee_Mad_Yin
                     blocks.Add(blocks_21);
                 }
 
-            for (int x = 0; x < 9; x++)
+                for (int x = 0; x < 9; x++)
                 {
                     Block blocks_1 = new Block(Content, "dirt");
                     Block blocks_2 = new Block(Content, "grass");
@@ -1149,7 +1174,7 @@ namespace The_Wee_Mad_Yin
                     blocks.Add(blocks_19);
                 }
 
-            for (int x = 0; x < 13; x++)
+                for (int x = 0; x < 13; x++)
                 {
                     Block blocks_5 = new Block(Content, "dirt");
                     Block blocks_13 = new Block(Content, "grass");
@@ -1162,8 +1187,356 @@ namespace The_Wee_Mad_Yin
 
             else if (level_number == 3)
             {
+                lives++;
+                for (int x = 0; x < 9; x++)
+                {
+                    Block blocks_1 = new Block(Content, "rock");
+                    Block blocks_2 = new Block(Content, "rock");
+                    Block blocks_3 = new Block(Content, "rock");
+                    Block blocks_4 = new Block(Content, "rock");
+                    Block blocks_5 = new Block(Content, "rock");
+                    Block blocks_6 = new Block(Content, "rock");
+                    Block blocks_7 = new Block(Content, "rock");
+                    Block blocks_8 = new Block(Content, "rock");
+                    Block blocks_9 = new Block(Content, "rock");
+                    Block blocks_10 = new Block(Content, "rock");
+                    Block blocks_11 = new Block(Content, "rock");
+                    Block blocks_12 = new Block(Content, "rock");
+                    Block blocks_26 = new Block(Content, "rock");
+                    Block blocks_33 = new Block(Content, "rock");
+                    blocks_1.block_position = new Vector2(0 + x * 40, 560);
+                    blocks_2.block_position = new Vector2(0 + x * 40, 520);
+                    blocks_3.block_position = new Vector2(0 + x * 40, 480);
+                    blocks_4.block_position = new Vector2(0 + x * 40, 440);
+                    blocks_5.block_position = new Vector2(0 + x * 40, 400);
+                    blocks_6.block_position = new Vector2(0 + x * 40, 360);
+                    blocks_7.block_position = new Vector2(0 + x * 40, 320);
+                    blocks_8.block_position = new Vector2(0 + x * 40, 280);
+                    blocks_9.block_position = new Vector2(0 + x * 40, 240);
+                    blocks_10.block_position = new Vector2(0 + x * 40, 200);
+                    blocks_11.block_position = new Vector2(0 + x * 40, 160);
+                    blocks_12.block_position = new Vector2(0 + x * 40, 120);
+                    blocks_26.block_position = new Vector2(1160 + x * 40, 520);
+                    blocks_33.block_position = new Vector2(1520 + x * 40, 560);
+                    blocks.Add(blocks_1);
+                    blocks.Add(blocks_2);
+                    blocks.Add(blocks_3);
+                    blocks.Add(blocks_4);
+                    blocks.Add(blocks_5);
+                    blocks.Add(blocks_6);
+                    blocks.Add(blocks_7);
+                    blocks.Add(blocks_8);
+                    blocks.Add(blocks_9);
+                    blocks.Add(blocks_10);
+                    blocks.Add(blocks_11);
+                    blocks.Add(blocks_12);
+                    blocks.Add(blocks_26);
+                    blocks.Add(blocks_33);
+                }
 
+                for (int x = 0; x < 40; x++)
+                {
+                    Block blocks_13 = new Block(Content, "rock");
+                    Block blocks_14 = new Block(Content, "rock");
+                    Block blocks_15 = new Block(Content, "rock");
+                    blocks_13.block_position = new Vector2(800 + x * 40, 0);
+                    blocks_14.block_position = new Vector2(800 + x * 40, 40);
+                    blocks_15.block_position = new Vector2(800 + x * 40, 80);
+                    blocks.Add(blocks_13);
+                    blocks.Add(blocks_14);
+                    blocks.Add(blocks_15);
+                }
+
+                for (int x = 0; x < 20; x++)
+                {
+                    Block blocks_16 = new Block(Content, "rock");
+                    Block blocks_17 = new Block(Content, "rock");
+                    Block blocks_18 = new Block(Content, "rock");
+                    blocks_16.block_position = new Vector2(800 + x * 40, 120);
+                    blocks_17.block_position = new Vector2(800 + x * 40, 160);
+                    blocks_18.block_position = new Vector2(800 + x * 40, 200);
+                    blocks.Add(blocks_16);
+                    blocks.Add(blocks_17);
+                    blocks.Add(blocks_18);
+                }
+
+                for (int x = 0; x < 1; x++)
+                {
+                    Block blocks_19 = new Block(Content, "rock");
+                    Block blocks_20 = new Block(Content, "rock");
+                    Block blocks_21 = new Block(Content, "rock");
+                    Block blocks_22 = new Block(Content, "rock");
+                    Block blocks_25 = new Block(Content, "rock");
+                    Block blocks_31 = new Block(Content, "rock");
+                    Block blocks_32 = new Block(Content, "rock");
+                    Block blocks_37 = new Block(Content, "rock");
+                    Block blocks_38 = new Block(Content, "rock");
+                    Block blocks_39 = new Block(Content, "rock");
+                    Block blocks_40 = new Block(Content, "rock");
+                    Block blocks_41 = new Block(Content, "rock");
+                    Eagle eagle_1 = new Eagle(Content);
+                    Thistle thistle_1 = new Thistle(Content);
+                    Haggis haggis_1 = new Haggis(Content);
+                    Haggis haggis_2 = new Haggis(Content);
+                    Haggis haggis_3 = new Haggis(Content);
+                    Haggis haggis_4 = new Haggis(Content);
+                    blocks_19.block_position = new Vector2(480, 160);
+                    blocks_20.block_position = new Vector2(640, 320);
+                    blocks_21.block_position = new Vector2(480, 520);
+                    blocks_22.block_position = new Vector2(640, 520);
+                    blocks_25.block_position = new Vector2(1160, 480);
+                    blocks_31.block_position = new Vector2(1480, 480);
+                    blocks_32.block_position = new Vector2(1480, 560);
+                    blocks_37.block_position = new Vector2(800, 240);
+                    blocks_38.block_position = new Vector2(800, 280);
+                    blocks_39.block_position = new Vector2(800, 320);
+                    blocks_40.block_position = new Vector2(760, -40);
+                    blocks_41.block_position = new Vector2(799, 320);
+                    eagle_1.eagle_position = new Vector2(545, 400);
+                    thistle_1.thistle_sprite.position = new Vector2(1065, 525);
+                    haggis_1.haggis_sprite.position = new Vector2(1530, 530);
+                    haggis_2.haggis_sprite.position = new Vector2(1790, 530);
+                    haggis_3.haggis_sprite.position = new Vector2(1210, 490);
+                    haggis_4.haggis_sprite.position = new Vector2(1470, 490);
+                    blocks.Add(blocks_19);
+                    blocks.Add(blocks_20);
+                    blocks.Add(blocks_21);
+                    blocks.Add(blocks_22);
+                    blocks.Add(blocks_25);
+                    blocks.Add(blocks_31);
+                    blocks.Add(blocks_32);
+                    blocks.Add(blocks_37);
+                    blocks.Add(blocks_38);
+                    blocks.Add(blocks_39);
+                    blocks.Add(blocks_40);
+                    blocks.Add(blocks_41);
+                    eagles.Add(eagle_1);
+                    thistles.Add(thistle_1);
+                    haggises.Add(haggis_1);
+                    haggises.Add(haggis_2);
+                    haggises.Add(haggis_3);
+                    haggises.Add(haggis_4);
+                }
+
+                for (int x = 0; x < 6; x++)
+                {
+                    Block blocks_23 = new Block(Content, "rock");
+                    blocks_23.block_position = new Vector2(800 + x * 40, 520);
+                    blocks.Add(blocks_23);
+                }
+
+                for (int x = 0; x < 2; x++)
+                {
+                    Block blocks_24 = new Block(Content, "rock");
+                    blocks_24.block_position = new Vector2(1060 + x * 40, 590);
+                    blocks.Add(blocks_24);
+                }
+
+                for (int x = 0; x < 5; x++)
+                {
+                    Block blocks_27 = new Block(Content, "rock");
+                    Block blocks_28 = new Block(Content, "rock");
+                    Block blocks_29 = new Block(Content, "rock");
+                    Block blocks_30 = new Block(Content, "rock");
+                    Block blocks_34 = new Block(Content, "rock");
+                    Block blocks_35 = new Block(Content, "rock");
+                    Block blocks_36 = new Block(Content, "rock");
+                    blocks_27.block_position = new Vector2(2200 + x * 40, 560);
+                    blocks_28.block_position = new Vector2(2200 + x * 40, 520);
+                    blocks_29.block_position = new Vector2(2200 + x * 40, 480);
+                    blocks_30.block_position = new Vector2(2200 + x * 40, 440);
+                    blocks_34.block_position = new Vector2(1880 + x * 40, 560);
+                    blocks_35.block_position = new Vector2(1880 + x * 40, 520);
+                    blocks_36.block_position = new Vector2(1880 + x * 40, 480);
+                    blocks.Add(blocks_27);
+                    blocks.Add(blocks_28);
+                    blocks.Add(blocks_29);
+                    blocks.Add(blocks_30);
+                    blocks.Add(blocks_34);
+                    blocks.Add(blocks_35);
+                    blocks.Add(blocks_36);
+                }
             }
+            else if (level_number == 4)
+            {
+                player_sprite.position = new Vector2(50, screen_height - 200);
+                for (int x = 0; x < 15; x++)
+                {
+                    Block blocks_1 = new Block(Content, "rock");
+                    Block blocks_2 = new Block(Content, "rock");
+                    Block blocks_3 = new Block(Content, "rock");
+                    Block blocks_4 = new Block(Content, "rock");
+                    Block blocks_5 = new Block(Content, "rock");
+                    Block blocks_6 = new Block(Content, "rock");
+                    Block blocks_7 = new Block(Content, "rock");
+                    Block blocks_8 = new Block(Content, "rock");
+                    Block blocks_13 = new Block(Content, "rock");
+                    Block blocks_14 = new Block(Content, "rock");
+                    Block blocks_15 = new Block(Content, "rock");
+                    Block blocks_16 = new Block(Content, "rock");
+                    Block blocks_17 = new Block(Content, "rock");
+                    Block blocks_26 = new Block(Content, "rock");
+                    Block blocks_27 = new Block(Content, "rock");
+                    Block blocks_28 = new Block(Content, "rock");
+                    Block blocks_29 = new Block(Content, "rock");
+                    Block blocks_30 = new Block(Content, "rock");
+                    Block blocks_31 = new Block(Content, "rock");
+                    Block blocks_32 = new Block(Content, "rock");
+                    Block blocks_33 = new Block(Content, "rock");
+                    Block blocks_34 = new Block(Content, "rock");
+                    Block blocks_35 = new Block(Content, "rock");
+                    Block blocks_36 = new Block(Content, "rock");
+                    blocks_1.block_position = new Vector2(0 + x * 40, 560);
+                    blocks_2.block_position = new Vector2(0 + x * 40, 520);
+                    blocks_3.block_position = new Vector2(0 + x * 40, 480);
+                    blocks_4.block_position = new Vector2(0 + x * 40, 440);
+                    blocks_5.block_position = new Vector2(0 + x * 40, 400);
+                    blocks_6.block_position = new Vector2(0 + x * 40, 360);
+                    blocks_7.block_position = new Vector2(0 + x * 40, 320);
+                    blocks_8.block_position = new Vector2(0 + x * 40, 280);
+                    blocks_13.block_position = new Vector2(920 + x * 40, 0);
+                    blocks_14.block_position = new Vector2(920 + x * 40, 40);
+                    blocks_15.block_position = new Vector2(920 + x * 40, 80);
+                    blocks_16.block_position = new Vector2(920 + x * 40, 120);
+                    blocks_17.block_position = new Vector2(920 + x * 40, 160);
+                    blocks_26.block_position = new Vector2(1960 + x * 40, 560);
+                    blocks_27.block_position = new Vector2(1960 + x * 40, 560);
+                    blocks_28.block_position = new Vector2(1960 + x * 40, 520);
+                    blocks_29.block_position = new Vector2(1960 + x * 40, 480);
+                    blocks_30.block_position = new Vector2(1960 + x * 40, 440);
+                    blocks_31.block_position = new Vector2(1960 + x * 40, 400);
+                    blocks_32.block_position = new Vector2(1960 + x * 40, 360);
+                    blocks_33.block_position = new Vector2(1960 + x * 40, 320);
+                    blocks_34.block_position = new Vector2(1960 + x * 40, 280);
+                    blocks_35.block_position = new Vector2(1960 + x * 40, 240);
+                    blocks_36.block_position = new Vector2(1960 + x * 40, 200);
+                    blocks.Add(blocks_1);
+                    blocks.Add(blocks_2);
+                    blocks.Add(blocks_3);
+                    blocks.Add(blocks_4);
+                    blocks.Add(blocks_5);
+                    blocks.Add(blocks_6);
+                    blocks.Add(blocks_7);
+                    blocks.Add(blocks_8);
+                    blocks.Add(blocks_13);
+                    blocks.Add(blocks_14);
+                    blocks.Add(blocks_15);
+                    blocks.Add(blocks_16);
+                    blocks.Add(blocks_17);
+                    blocks.Add(blocks_26);
+                    blocks.Add(blocks_27);
+                    blocks.Add(blocks_28);
+                    blocks.Add(blocks_29);
+                    blocks.Add(blocks_30);
+                    blocks.Add(blocks_31);
+                    blocks.Add(blocks_32);
+                    blocks.Add(blocks_33);
+                    blocks.Add(blocks_34);
+                    blocks.Add(blocks_35);
+                    blocks.Add(blocks_36);
+                }
+
+                for (int x = 0; x < 2; x++)
+                {
+                    Block blocks_18 = new Block(Content, "rock");
+                    Block blocks_19 = new Block(Content, "rock");
+                    Block blocks_20 = new Block(Content, "rock");
+                    Block blocks_21 = new Block(Content, "rock");
+                    Block blocks_22 = new Block(Content, "rock");
+                    blocks_18.block_position = new Vector2(920 + x * 40, 480);
+                    blocks_19.block_position = new Vector2(1020 + x * 40, 580);
+                    blocks_20.block_position = new Vector2(1120 + x * 40, 480);
+                    blocks_21.block_position = new Vector2(1220 + x * 40, 580);
+                    blocks_22.block_position = new Vector2(1320 + x * 40, 480);
+                    blocks.Add(blocks_18);
+                    blocks.Add(blocks_19);
+                    blocks.Add(blocks_20);
+                    blocks.Add(blocks_21);
+                    blocks.Add(blocks_22);
+                }
+
+                for (int x = 0; x < 6; x++)
+                {
+                    Block blocks_9 = new Block(Content, "rock");
+                    Block blocks_10 = new Block(Content, "rock");
+                    blocks_9.block_position = new Vector2(0 + x * 40, 240);
+                    blocks_10.block_position = new Vector2(0 + x * 40, 200);
+                    blocks.Add(blocks_9);
+                    blocks.Add(blocks_10);
+                }
+
+                for (int x = 0; x < 1; x++)
+                {
+                    Block blocks_11 = new Block(Content, "rock");
+                    Block blocks_12 = new Block(Content, "rock");
+                    Block blocks_23 = new Block(Content, "rock");
+                    Block blocks_24 = new Block(Content, "rock");
+                    Block blocks_25 = new Block(Content, "rock");
+                    Block blocks_37 = new Block(Content, "rock");
+                    Block blocks_38 = new Block(Content, "rock");
+                    Haggis haggis_1 = new Haggis(Content);
+                    Haggis haggis_2 = new Haggis(Content);
+                    Eagle eagle_1 = new Eagle(Content);
+                    Eagle eagle_2 = new Eagle(Content);
+                    Eagle eagle_3 = new Eagle(Content);
+                    Thistle thistle_1 = new Thistle(Content);
+                    Thistle thistle_2 = new Thistle(Content);
+                    blocks_11.block_position = new Vector2(560, 240);
+                    blocks_12.block_position = new Vector2(720, 360);
+                    blocks_23.block_position = new Vector2(1520, 520);
+                    blocks_24.block_position = new Vector2(1640, 520);
+                    blocks_25.block_position = new Vector2(1800, 440);
+                    blocks_37.block_position = new Vector2(1640, 320);
+                    blocks_38.block_position = new Vector2(1800, 240);
+                    haggis_1.haggis_sprite.position = new Vector2(241, 250);
+                    haggis_2.haggis_sprite.position = new Vector2(520, 250);
+                    eagle_1.eagle_position = new Vector2(620, 100);
+                    eagle_2.eagle_position = new Vector2(780, 500);
+                    eagle_3.eagle_position = new Vector2(1700, 300);
+                    thistle_1.thistle_sprite.position = new Vector2(1025, 485);
+                    thistle_2.thistle_sprite.position = new Vector2(1225, 485);
+                    blocks.Add(blocks_11);
+                    blocks.Add(blocks_12);
+                    blocks.Add(blocks_23);
+                    blocks.Add(blocks_24);
+                    blocks.Add(blocks_25);
+                    blocks.Add(blocks_37);
+                    blocks.Add(blocks_38);
+                    haggises.Add(haggis_1);
+                    haggises.Add(haggis_2);
+                    eagles.Add(eagle_1);
+                    eagles.Add(eagle_2);
+                    eagles.Add(eagle_3);
+                    thistles.Add(thistle_1);
+                    thistles.Add(thistle_2);
+                }
+            }
+
+
+            foreach (Haggis x in haggises)
+            {
+                if (speedup == true)
+                {
+                    x.haggis_velo = 0.4f;
+                }
+                else
+                {
+                    x.haggis_velo = 0.2f;
+                }
+            }
+
+            foreach (Eagle x in eagles)
+            {
+                if (speedup == true)
+                {
+                    x.eagle_velo = 0.5f;
+                }
+                else
+                {
+                    x.eagle_velo = 0.25f;
+                }
+            }
+
         }
 
         protected void Clear()
@@ -1174,6 +1547,5 @@ namespace The_Wee_Mad_Yin
             thistles.Clear();
             shortbreads.Clear();
         }
-
     }
 }
