@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Microsoft.Xna.Framework.Media;
 using System;
+using Microsoft.Xna.Framework.Audio;
 
 namespace The_Wee_Mad_Yin
 {
@@ -32,6 +33,8 @@ namespace The_Wee_Mad_Yin
 
         sprite nessie_sprite;
 
+        sprite bottled_juice;
+
         sprite[] backgrounds = new sprite[7];
 
         sprite[] buttons = new sprite[4];
@@ -45,6 +48,14 @@ namespace The_Wee_Mad_Yin
         Song[] background_music = new Song[7];
 
         Song main_music;
+
+        SoundEffect button_forward;
+        SoundEffect button_back;
+        SoundEffect bounce;
+        SoundEffect taking_damage;
+        SoundEffect drinking;
+        SoundEffect eating;
+        SoundEffect gameover_sound;
 
         List<Haggis> haggises = new List<Haggis>();
         List<Thistle> thistles = new List<Thistle>();
@@ -124,14 +135,18 @@ namespace The_Wee_Mad_Yin
             backgrounds[5] = new sprite(Content, "background_city", 0, 0, 1);
             backgrounds[6] = new sprite(Content, "Background2", 0, 0, 1);
 
-            //main_music = Content.Load<Song>("");
-            //background_music[0] = Content.Load<Song>("");
-            //background_music[1] = Content.Load<Song>("");
-            //background_music[2] = Content.Load<Song>("");
-            //background_music[3] = Content.Load<Song>("");
-            //background_music[4] = Content.Load<Song>("");
-            //background_music[5] = Content.Load<Song>("");
-            //background_music[6] = Content.Load<Song>("");
+            //main_music = Content.Load<Song>("main_music");
+            //background_music[0] = Content.Load<Song>("grass_music");
+            //background_music[1] = Content.Load<Song>("cave_music");
+            //background_music[2] = Content.Load<Song>("city_music");
+
+            button_forward = Content.Load<SoundEffect>("button_forward");
+            button_back = Content.Load<SoundEffect>("button_back");
+            bounce = Content.Load<SoundEffect>("bounce");
+            taking_damage = Content.Load<SoundEffect>("player_hit");
+            drinking = Content.Load<SoundEffect>("drinking");
+            eating = Content.Load<SoundEffect>("eating");
+            gameover_sound = Content.Load<SoundEffect>("game_over");
 
 
             buttons[0] = new sprite(Content, "button_play", (screen_width * 2/3), (screen_height * 1/5 - 30), 1);
@@ -149,6 +164,7 @@ namespace The_Wee_Mad_Yin
             player_sprite = new sprite2(Content, "running", 200, screen_height - 200, 4, 6, 0.3f);
             //gerard_sprite = new sprite(Content, "", 40, screen_height - 50, 1);
             //nessie_sprite = new sprite(Content, "", 100, screen_height - 50, 1);
+            bottled_juice = new sprite(Content, "bottled_juice", 2300, 0, 1);
 
             info_position = new Vector2(50, 20);
 
@@ -244,6 +260,7 @@ namespace The_Wee_Mad_Yin
                 {
                     gameon = true;
                     menu = false;
+                    button_forward.Play();
                     player_sprite.position = new Vector2(200, screen_height - 200);
                     level_number = 3;
                     score = 0;
@@ -264,6 +281,7 @@ namespace The_Wee_Mad_Yin
                 {
                     leaderboard = true;
                     menu = false;
+                    button_forward.Play();
                 }
 
                 if ((mouse_box.Intersects(button_box3)))
@@ -278,6 +296,7 @@ namespace The_Wee_Mad_Yin
                 {
                     options = true;
                     menu = false;
+                    button_forward.Play();
                     button_timercount = 0;
                 }
 
@@ -311,6 +330,7 @@ namespace The_Wee_Mad_Yin
                 if ((mouse_box.Intersects(back_box)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     menu = true;
+                    button_back.Play();
                     leaderboard = false;
                     button_timercount = 0;
                 }
@@ -347,6 +367,7 @@ namespace The_Wee_Mad_Yin
                 if ((mouse_box.Intersects(option_box1)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
                     defaultlives = 3;
+                    button_forward.Play();
                     hard = false;
                     speedup = false;
                 }
@@ -362,6 +383,7 @@ namespace The_Wee_Mad_Yin
                 if ((mouse_box.Intersects(option_box2)) && (mouse.LeftButton == ButtonState.Pressed) && (button_timercount >= button_timer))
                 {
                     defaultlives = 1;
+                    button_forward.Play();
                     hard = true;
                     speedup = true;
                 }
@@ -378,6 +400,7 @@ namespace The_Wee_Mad_Yin
                 {
                     menu = true;
                     options = false;
+                    button_back.Play();
                     button_timercount = 0;
                 }
 
@@ -414,6 +437,7 @@ namespace The_Wee_Mad_Yin
                     player_camera.Position = new Vector2(0, 0);
                     player_sprite.position = new Vector2(200, screen_height - 200);
                     score += 200;
+                    drinking.Play();
                     Load_Level();
                     if (hard == true)
                     {
@@ -566,6 +590,7 @@ namespace The_Wee_Mad_Yin
                         {
                             player_sprite.position.X = x.eagle_position.X - player_sprite.sprite_animation.rect.Width;
                             lives -= 1;
+                            taking_damage.Play();
                             current_lcooldown = 0;
                             player_sprite.velocity.X -= 10;
                         }
@@ -578,6 +603,7 @@ namespace The_Wee_Mad_Yin
                             eagle_hit = x;
                             player_sprite.velocity.Y -= 60;
                             jump = true;
+                            bounce.Play();
                         }
 
                     }
@@ -631,6 +657,7 @@ namespace The_Wee_Mad_Yin
                     {
                         haggis_hit = x;
                         jump = true;
+                        bounce.Play();
                         player_sprite.position.Y = x.haggis_sprite.position.Y - player_sprite.sprite_animation.rect.Height - 4;
                         player_sprite.velocity.Y -= 50;
                     }
@@ -638,6 +665,7 @@ namespace The_Wee_Mad_Yin
                     if (x.haggis_box.Intersects(player_box) && (jump == false) && (current_lcooldown >= life_cooldown))
                     {
                         lives--;
+                        taking_damage.Play();
                         current_lcooldown = 0;
                         player_sprite.velocity.X -= 10;
                     }
@@ -669,6 +697,7 @@ namespace The_Wee_Mad_Yin
                     if (x.sbread_box.Intersects(player_box))
                     {
                         shortbread_hit = x;
+                        eating.Play();
                     }
                 }
 
@@ -681,6 +710,7 @@ namespace The_Wee_Mad_Yin
                         && ((player_sprite.position.X - (x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width) < 10)))
                     {
                         player_sprite.velocity.X -= 10;
+                        taking_damage.Play();
                         if ((player_sprite.position.X - (x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width) > 1))
                         {
                             player_sprite.position.X = x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width;
@@ -695,6 +725,7 @@ namespace The_Wee_Mad_Yin
                     else if (player_box.Intersects(x.thistle_box) && (player_sprite.position.X > x.thistle_sprite.position.X) && (player_sprite.position.Y >= x.thistle_sprite.position.Y))
                     {
                         player_sprite.velocity.X += 10;
+                        taking_damage.Play();
                         if ((player_sprite.position.X - (x.thistle_sprite.position.X + x.thistle_sprite.sprite_animation.rect.Width) < 39))
                         {
                             player_sprite.position.X = x.thistle_sprite.position.X + x.thistle_sprite.sprite_animation.rect.Width;
@@ -709,6 +740,7 @@ namespace The_Wee_Mad_Yin
                     {
                         jump = true;
                         player_sprite.velocity.Y -= 60;
+                        taking_damage.Play();
                         if ((player_sprite.position.Y - (x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height) > 6))
                         {
                             player_sprite.position.Y = x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height;
@@ -749,6 +781,7 @@ namespace The_Wee_Mad_Yin
                 {
                     gameon = false;
                     gameover = true;
+                    gameover_sound.Play();
                 }
 
                 //for (int i = 0; i < level_number; i++)
@@ -792,6 +825,7 @@ namespace The_Wee_Mad_Yin
                     gameover = false;
                     gameon = true;
                     level_number = 0;
+                    button_forward.Play();
                     Load_Level();
                     player_sprite.position = new Vector2(200, screen_height - 200);
                     defaultlives = 3;
@@ -862,6 +896,7 @@ namespace The_Wee_Mad_Yin
                 }
 
                     player_sprite.DrawNormal(spriteBatch);
+                bottled_juice.DrawNormal(spriteBatch);
 
                     if (level_number == 7)
                     {
@@ -925,6 +960,7 @@ namespace The_Wee_Mad_Yin
 
             if (level_number == 1)
             {
+                bottled_juice.position.Y = 400;
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_17 = new Block(Content, "grass");
@@ -1073,6 +1109,7 @@ namespace The_Wee_Mad_Yin
 
             else if (level_number == 2)
             {
+                bottled_juice.position.Y = 300;
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_3 = new Block(Content, "grass");
@@ -1188,6 +1225,7 @@ namespace The_Wee_Mad_Yin
             else if (level_number == 3)
             {
                 lives++;
+                bottled_juice.position.Y = 370;
                 for (int x = 0; x < 9; x++)
                 {
                     Block blocks_1 = new Block(Content, "rock");
@@ -1360,6 +1398,7 @@ namespace The_Wee_Mad_Yin
             else if (level_number == 4)
             {
                 player_sprite.position = new Vector2(50, screen_height - 200);
+                bottled_juice.position.Y = 100;
                 for (int x = 0; x < 15; x++)
                 {
                     Block blocks_1 = new Block(Content, "rock");
