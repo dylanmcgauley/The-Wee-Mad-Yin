@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.Xna.Framework.Media;
 using System;
 using Microsoft.Xna.Framework.Audio;
+using System.Media;
 
 namespace The_Wee_Mad_Yin
 {
@@ -45,10 +46,10 @@ namespace The_Wee_Mad_Yin
 
         sprite restart_button;
 
-        Song[] background_music = new Song[7];
-
+        Song grass_music;
         Song main_music;
-
+        Song cave_music;
+        Song city_music;
         SoundEffect button_forward;
         SoundEffect button_back;
         SoundEffect bounce;
@@ -89,6 +90,7 @@ namespace The_Wee_Mad_Yin
         bool jump = false;
         bool hard = false;
         bool speedup = false;
+        bool songplaying = false;
 
         public Game1()
         {
@@ -133,20 +135,18 @@ namespace The_Wee_Mad_Yin
             backgrounds[3] = new sprite(Content, "background_cave", 0, 0, 1);
             backgrounds[4] = new sprite(Content, "background_city", 0, 0, 1);
             backgrounds[5] = new sprite(Content, "background_city", 0, 0, 1);
-            backgrounds[6] = new sprite(Content, "Background2", 0, 0, 1);
 
-            //main_music = Content.Load<Song>("main_music");
-            //background_music[0] = Content.Load<Song>("grass_music");
-            //background_music[1] = Content.Load<Song>("cave_music");
-            //background_music[2] = Content.Load<Song>("city_music");
-
+            grass_music = Content.Load<Song>("grass_music");
+            cave_music = Content.Load<Song>("cave_music");
+            city_music = Content.Load<Song>("city_music");
+            main_music = Content.Load<Song>("main_music");
             button_forward = Content.Load<SoundEffect>("button_forward");
             button_back = Content.Load<SoundEffect>("button_back");
             bounce = Content.Load<SoundEffect>("bounce");
             taking_damage = Content.Load<SoundEffect>("player_hit");
             drinking = Content.Load<SoundEffect>("drinking");
             eating = Content.Load<SoundEffect>("eating");
-            gameover_sound = Content.Load<SoundEffect>("game_over");
+            gameover_sound = Content.Load<SoundEffect>("gameover_sound");
 
 
             buttons[0] = new sprite(Content, "button_play", (screen_width * 2/3), (screen_height * 1/5 - 30), 1);
@@ -239,6 +239,7 @@ namespace The_Wee_Mad_Yin
 
             if (menu == true)
             {
+                MediaPlayer.Volume = 0.1f;
                 player_camera.Position = new Vector2(0, 0);
                 IsMouseVisible = true;
                 Rectangle button_box1 = new Rectangle((int)buttons[0].position.X, (int)buttons[0].position.Y, buttons[0].graphic.Width, buttons[0].graphic.Height);
@@ -246,7 +247,12 @@ namespace The_Wee_Mad_Yin
                 Rectangle button_box3 = new Rectangle((int)buttons[2].position.X, (int)buttons[2].position.Y, buttons[2].graphic.Width, buttons[2].graphic.Height);
                 Rectangle button_box4 = new Rectangle((int)buttons[3].position.X, (int)buttons[3].position.Y, buttons[3].graphic.Width, buttons[3].graphic.Height);
 
-                //MediaPlayer.Play(main_music);
+                if (songplaying == false)
+                {
+                    MediaPlayer.Play(main_music);
+                    MediaPlayer.IsRepeating = true;
+                    songplaying = true;
+                }
 
                 if ((mouse_box.Intersects(button_box1)))
                 {
@@ -261,8 +267,10 @@ namespace The_Wee_Mad_Yin
                     gameon = true;
                     menu = false;
                     button_forward.Play();
+                    songplaying = false;
+                    MediaPlayer.Volume = 1;
                     player_sprite.position = new Vector2(200, screen_height - 200);
-                    level_number = 3;
+                    level_number = 0;
                     score = 0;
                     lives = defaultlives;
 
@@ -410,6 +418,7 @@ namespace The_Wee_Mad_Yin
             else if (gameon == true)
             {
                 IsMouseVisible = false;
+                MediaPlayer.Volume = 1;
                 player_camera.Position = new Vector2(player_sprite.position.X - 200, 0);
                 Rectangle player_box = new Rectangle((int)player_sprite.position.X, (int)player_sprite.position.Y, player_sprite.sprite_animation.rect.Width, player_sprite.sprite_animation.rect.Height);
 
@@ -436,6 +445,7 @@ namespace The_Wee_Mad_Yin
                 {
                     player_camera.Position = new Vector2(0, 0);
                     player_sprite.position = new Vector2(200, screen_height - 200);
+                    songplaying = false;
                     score += 200;
                     drinking.Play();
                     Load_Level();
@@ -955,12 +965,15 @@ namespace The_Wee_Mad_Yin
 
         protected void Load_Level()
         {
-            Clear();
+            Clear();   
+            MediaPlayer.Stop();
             level_number++;
-
+            
             if (level_number == 1)
             {
                 bottled_juice.position.Y = 400;
+                MediaPlayer.Play(grass_music);
+                MediaPlayer.IsRepeating = true;
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_17 = new Block(Content, "grass");
@@ -1110,6 +1123,8 @@ namespace The_Wee_Mad_Yin
             else if (level_number == 2)
             {
                 bottled_juice.position.Y = 300;
+                MediaPlayer.Play(grass_music);
+                MediaPlayer.IsRepeating = true;
                 for (int x = 0; x < 1; x++)
                 {
                     Block blocks_3 = new Block(Content, "grass");
@@ -1226,6 +1241,8 @@ namespace The_Wee_Mad_Yin
             {
                 lives++;
                 bottled_juice.position.Y = 370;
+                MediaPlayer.Play(cave_music);
+                MediaPlayer.IsRepeating = true;
                 for (int x = 0; x < 9; x++)
                 {
                     Block blocks_1 = new Block(Content, "rock");
@@ -1399,6 +1416,8 @@ namespace The_Wee_Mad_Yin
             {
                 player_sprite.position = new Vector2(50, screen_height - 200);
                 bottled_juice.position.Y = 100;
+                MediaPlayer.Play(cave_music);
+                MediaPlayer.IsRepeating = true;
                 for (int x = 0; x < 15; x++)
                 {
                     Block blocks_1 = new Block(Content, "rock");
@@ -1549,6 +1568,18 @@ namespace The_Wee_Mad_Yin
                     thistles.Add(thistle_1);
                     thistles.Add(thistle_2);
                 }
+            }
+            else if (level_number == 5)
+            {
+                lives++;
+                MediaPlayer.Play(city_music);
+                MediaPlayer.IsRepeating = true;
+
+            }
+            else if (level_number == 6)
+            {
+                MediaPlayer.Play(city_music);
+                MediaPlayer.IsRepeating = true;
             }
 
 
