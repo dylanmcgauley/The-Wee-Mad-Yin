@@ -123,7 +123,7 @@ namespace The_Wee_Mad_Yin
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            info = Content.Load<SpriteFont>("SpriteFont");
+            info = Content.Load<SpriteFont>("font");
 
             player_camera = new Camera(GraphicsDevice.Viewport);
 
@@ -271,7 +271,7 @@ namespace The_Wee_Mad_Yin
                     songplaying = false;
                     MediaPlayer.Volume = 1;
                     player_sprite.position = new Vector2(200, screen_height - 200);
-                    level_number = 4;
+                    level_number = 0;
                     score = 0;
                     lives = defaultlives;
 
@@ -419,7 +419,6 @@ namespace The_Wee_Mad_Yin
             else if (gameon == true)
             {
                 IsMouseVisible = false;
-                MediaPlayer.Volume = 1;
                 player_camera.Position = new Vector2(player_sprite.position.X - 200, 0);
                 Rectangle player_box = new Rectangle((int)player_sprite.position.X, (int)player_sprite.position.Y, player_sprite.sprite_animation.rect.Width, player_sprite.sprite_animation.rect.Height);
 
@@ -947,7 +946,7 @@ namespace The_Wee_Mad_Yin
 
                 restart_button.DrawNormal(spriteBatch);
 
-                spriteBatch.DrawString(info,"Your Score:    " + score, new Vector2(340, 300), Color.Red);
+                spriteBatch.DrawString(info,"Your Score:    " + score, new Vector2(300, 300), Color.Red);
             }
 
             spriteBatch.End();
@@ -958,8 +957,8 @@ namespace The_Wee_Mad_Yin
                 spriteBatch.DrawString(info, "Lives: " + lives, info_position,
                 Color.White, MathHelper.ToRadians(0), new Vector2(0, 0), 1.5f, SpriteEffects.None, 0);
 
-           //     spriteBatch.DrawString(info, "Lives: " + lives, info_position, Color.Red);
-                spriteBatch.DrawString(info, player_sprite.position+"Score: " + score, new Vector2(info_position.X + 200, info_position.Y), Color.Red);
+                spriteBatch.DrawString(info, player_sprite.position + "Score: " + score, new Vector2(info_position.X + 200, info_position.Y),
+                Color.White, MathHelper.ToRadians(0), new Vector2(0, 0), 1.5f, SpriteEffects.None, 0);
             }
             spriteBatch.End();
 
@@ -1147,7 +1146,7 @@ namespace The_Wee_Mad_Yin
                     eagle_2.eagle_position = new Vector2(545, 550);
                     haggis_1.haggis_sprite.position = new Vector2(730, 490);
                     haggis_2.haggis_sprite.position = new Vector2(1020, 490);
-                    thistle_1.thistle_sprite.position = new Vector2(860, 142);
+                    thistle_1.thistle_sprite.position = new Vector2(850, 142);
                     thistle_2.thistle_sprite.position = new Vector2(1475, 472);
                     blocks.Add(blocks_3);
                     blocks.Add(blocks_11);
