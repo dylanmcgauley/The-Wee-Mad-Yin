@@ -13,7 +13,7 @@ namespace The_Wee_Mad_Yin
         public animation sprite_animation;
         public Vector2 position;
         public Vector2 velocity;
-        Rectangle rectangle;
+        //Rectangle rectangle;
         float fpsfactor = 10f;
         float size;
 

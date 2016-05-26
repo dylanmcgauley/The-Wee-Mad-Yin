@@ -60,8 +60,18 @@ namespace The_Wee_Mad_Yin
         List<Shortbread> shortbreads = new List<Shortbread>();
         List<Block> blocks = new List<Block>();
 
-        int[] highscores = new int[10];
-        string[] names = new string[10];
+        Boolean keyboardreleased = true;
+        KeyboardState keys;                             // Variable to hold keyboard state
+        KeyboardState lastkeystate;
+
+        const int numberofhighscores = 10;                              // Number of high scores to store
+        int[] highscores = new int[numberofhighscores];                 // Array of high scores
+        string[] highscorenames = new string[numberofhighscores];       // Array of high score names
+        const int maxnamelength = 7;   // Maximum name length for high score table
+        int lasthighscore = numberofhighscores - 1;
+
+        float keycounter = 0;           // Counter for delay between key strokes
+        const float keystrokedelay = 200;   // Delay between key strokes in milliseconds
 
         int screen_width = 800;
         int screen_height = 600;
@@ -71,7 +81,7 @@ namespace The_Wee_Mad_Yin
 
         int defaultlives = 3;
         int lives = 3;
-        float score = 0;
+        int score = 0;
 
         const int button_timer = 500;
         int button_timercount = 0;
@@ -123,7 +133,7 @@ namespace The_Wee_Mad_Yin
 
             player_camera = new Camera(GraphicsDevice.Viewport);
 
-            background_main = new sprite(Content, "main_menu", 0,0, 1);
+            background_main = new sprite(Content, "main_menu", 0, 0, 1);
             background_gameover = new sprite(Content, "game_over", 0, 0, 1);
             backgrounds[0] = new sprite(Content, "background_blueclouds", 0, 0, 1);
             backgrounds[1] = new sprite(Content, "background_blueclouds", 0, 0, 1);
@@ -145,55 +155,47 @@ namespace The_Wee_Mad_Yin
             gameover_sound = Content.Load<SoundEffect>("gameover_sound");
 
 
-            buttons[0] = new sprite(Content, "button_play", (screen_width * 2/3), (screen_height * 1/5 - 30), 1);
-            buttons[1] = new sprite(Content, "button_leaderboard", (screen_width * 2/3), (screen_height * 2 / 5 - 30), 1);
-            buttons[2] = new sprite(Content, "button_options", (screen_width * 2/3), (screen_height * 3 / 5 - 30), 1);
-            buttons[3] = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 4 / 5 - 30), 1);
+            buttons[0] = new sprite(Content, "button_play", (screen_width * 2 / 3), (screen_height * 1 / 5 - 30), 1);
+            buttons[1] = new sprite(Content, "button_leaderboard", (screen_width * 2 / 3), (screen_height * 2 / 5 - 30), 1);
+            buttons[2] = new sprite(Content, "button_options", (screen_width * 2 / 3), (screen_height * 3 / 5 - 30), 1);
+            buttons[3] = new sprite(Content, "button_exit", (screen_width * 2 / 3), (screen_height * 4 / 5 - 30), 1);
 
-            back_button = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 17 / 20 - screen_height / 10), 1);
+            back_button = new sprite(Content, "button_exit", (screen_width * 2 / 3), (screen_height * 17 / 20 - screen_height / 10), 1);
             restart_button = new sprite(Content, "button_restart", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
 
-            option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 2/3), (screen_height * 1 / 4 - 30), 1);
-            option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 2/3), (screen_height * 1 / 2 - 30), 1);
-            option_buttons[2] = new sprite(Content, "button_exit", (screen_width * 2/3), (screen_height * 3 / 4 - 30), 1);
+            option_buttons[0] = new sprite(Content, "button_easy", (screen_width * 2 / 3), (screen_height * 1 / 4 - 30), 1);
+            option_buttons[1] = new sprite(Content, "button_hard", (screen_width * 2 / 3), (screen_height * 1 / 2 - 30), 1);
+            option_buttons[2] = new sprite(Content, "button_exit", (screen_width * 2 / 3), (screen_height * 3 / 4 - 30), 1);
 
             player_sprite = new sprite2(Content, "running", 200, screen_height - 200, 4, 6, 0.3f);
             bottled_juice = new sprite(Content, "bottled_juice", 2300, 0, 1);
 
             info_position = new Vector2(50, 20);
 
-            var reader = File.OpenText("Scores.txt");
-
-            string line;
-
-            while ((line = reader.ReadLine()) != null)
+            // Load in high scores
+            if (File.Exists(@"highscore.txt")) // This checks to see if the file exists
             {
-                // split the string on any spaces
-                string[] split = line.Split(' ');
+                StreamReader sr = new StreamReader(@"highscore.txt");	// Open the file
 
-                highscores[0] = Convert.ToInt32(split[0]);
-                highscores[1] = Convert.ToInt32(split[2]);
-                highscores[2] = Convert.ToInt32(split[4]);
-                highscores[3] = Convert.ToInt32(split[6]);
-                highscores[4] = Convert.ToInt32(split[8]);
-                highscores[5] = Convert.ToInt32(split[10]);
-                highscores[6] = Convert.ToInt32(split[12]);
-                highscores[7] = Convert.ToInt32(split[14]);
-                highscores[8] = Convert.ToInt32(split[16]);
-                highscores[9] = Convert.ToInt32(split[18]);
-                names[0] = Convert.ToString(split[1]);
-                names[1] = Convert.ToString(split[3]);
-                names[2] = Convert.ToString(split[5]);
-                names[3] = Convert.ToString(split[7]);
-                names[4] = Convert.ToString(split[9]);
-                names[5] = Convert.ToString(split[11]);
-                names[6] = Convert.ToString(split[13]);
-                names[7] = Convert.ToString(split[15]);
-                names[8] = Convert.ToString(split[17]);
-                names[9] = Convert.ToString(split[19]);
+                String line;		// Create a string variable to read each line into
+                for (int i = 0; i < numberofhighscores && !sr.EndOfStream; i++)
+                {
+                    line = sr.ReadLine();	// Read the first line in the text file
+                    highscorenames[i] = line.Trim(); // Read high score name
+
+                    if (!sr.EndOfStream)
+                    {
+                        line = sr.ReadLine();	// Read the first line in the text file
+                        line = line.Trim(); 	// This trims spaces from either side of the text
+                        highscores[i] = Convert.ToInt32(line);	// This converts line to numeric
+                    }
+                }
+                sr.Close();			// Close the file
             }
-
-            // TODO: use this.Content to load your game content here
+            // SORT HIGH SCORE TABLE
+            Array.Sort(highscores, highscorenames);
+            Array.Reverse(highscores);
+            Array.Reverse(highscorenames);
         }
 
         /// <summary>
@@ -203,6 +205,14 @@ namespace The_Wee_Mad_Yin
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            // Save high scores
+            StreamWriter sw = new StreamWriter(@"highscore.txt");
+            for (int i = 0; i < numberofhighscores; i++)
+            {
+                sw.WriteLine(highscorenames[i]);
+                sw.WriteLine(highscores[i].ToString());
+            }
+            sw.Close();
         }
 
         /// <summary>
@@ -212,23 +222,22 @@ namespace The_Wee_Mad_Yin
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                gameon = false;
-                options = false;
-                leaderboard = false;
-                menu = true;
-                MediaPlayer.Volume = 0.1f;
-            }
+            keys = Keyboard.GetState();                     // Read keyboard
+            keyboardreleased = (keys != lastkeystate);      // Has keyboard input changed
 
             float timebetweenupdates = (float)gameTime.ElapsedGameTime.TotalMilliseconds; // Time between updates
 
             current_time = gameTime.ElapsedGameTime.Milliseconds;
             var controller = GamePad.GetState(PlayerIndex.One);
-            var controls = Keyboard.GetState();
             var mouse = Mouse.GetState();
-            
-            Rectangle mouse_box = new Rectangle((int)mouse.X,(int)mouse.Y, 1, 1);
+
+            if (controller.Buttons.Back == ButtonState.Pressed || keys.IsKeyDown(Keys.Escape) && (menu == false) && (button_timercount >= button_timer))
+            {
+                returntomain();
+                button_timercount = 0;
+            }
+
+            Rectangle mouse_box = new Rectangle((int)mouse.X, (int)mouse.Y, 1, 1);
             button_timercount += current_time;
             current_lcooldown += current_time;
 
@@ -257,19 +266,10 @@ namespace The_Wee_Mad_Yin
                 {
                     buttons[0] = new sprite(Content, "button_play", (screen_width * 2 / 3), (screen_height * 1 / 5 - 30), 1);
                 }
+
                 if ((mouse_box.Intersects(button_box1)) && (mouse.LeftButton == ButtonState.Pressed))
                 {
-                    gameon = true;
-                    menu = false;
-                    button_forward.Play();
-                    songplaying = false;
-                    MediaPlayer.Volume = 1;
-                    player_sprite.position = new Vector2(200, screen_height - 200);
-                    level_number = 0;
-                    score = 0;
-                    lives = defaultlives;
-
-                    Load_Level();
+                    startgame();
                 }
 
                 if ((mouse_box.Intersects(button_box2)))
@@ -337,14 +337,6 @@ namespace The_Wee_Mad_Yin
                     leaderboard = false;
                     button_timercount = 0;
                 }
-
-                //MediaPlayer.Play(main_music);
-
-                //if (File.Exists(@"Gamehighscores.txt"))
-                //{
-                //    StreamReader file = new StreamReader(@"Gamehighscores.txt");
-
-                //}
             }
 
             else if (options == true)
@@ -417,7 +409,6 @@ namespace The_Wee_Mad_Yin
                 Eagle eagle_hit = null;
                 Haggis haggis_hit = null;
                 Shortbread shortbread_hit = null;
-                Thistle thistle_hit = null;
                 Block block_hit = null;
 
                 if (player_sprite.position.X < 200)
@@ -509,25 +500,23 @@ namespace The_Wee_Mad_Yin
                 }
                 else
                 {
-                    if (controls.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
+                    if (keys.IsKeyDown(Keys.Space) || (controller.Buttons.A == ButtonState.Pressed))
                     {
                         jump = true;
                         player_sprite.velocity.Y -= 30;
                     }
                 }
 
-                if (controls.IsKeyDown(Keys.A) || (controller.DPad.Left == ButtonState.Pressed) || (controller.ThumbSticks.Left.X < -0.1))
+                if (keys.IsKeyDown(Keys.A) || (controller.DPad.Left == ButtonState.Pressed) || (controller.ThumbSticks.Left.X < -0.1))
                 {
-                    //player_sprite.position.X -= 2.5f;
                     player_sprite.velocity.X -= 0.2f;
-                    player_camera.Position -= new Vector2(1.5f,0);
+                    player_camera.Position -= new Vector2(1.5f, 0);
 
                     player_sprite.sprite_animation.fliphorizontal = true;
                 }
 
-                if (controls.IsKeyDown(Keys.D) || (controller.DPad.Right == ButtonState.Pressed) || (controller.ThumbSticks.Left.X > 0.1))
+                if (keys.IsKeyDown(Keys.D) || (controller.DPad.Right == ButtonState.Pressed) || (controller.ThumbSticks.Left.X > 0.1))
                 {
-                    //player_sprite.position.X += 2.5f;
                     player_sprite.velocity.X += 0.2f;
                     player_camera.Position += new Vector2(1.5f, 0);
                     player_sprite.sprite_animation.fliphorizontal = false;
@@ -561,13 +550,6 @@ namespace The_Wee_Mad_Yin
 
                     x.eagle_position.Y += x.eagle_velo * current_time;
 
-                    //if (x.eagle_box.Intersects(player_box) && current_lcooldown >= life_cooldown)
-                    //{
-                    //    lives -= 1;
-                    //    current_lcooldown = 0;
-                    //    player_sprite.velocity.X -= 10;
-                    //}
-                    
                     if (x.eagle_position.Y < 0)
                     {
                         x.eagle_position.Y = 1;
@@ -587,7 +569,7 @@ namespace The_Wee_Mad_Yin
                         {
                             player_sprite.position.X = x.eagle_position.X - player_sprite.sprite_animation.rect.Width;
                             lives -= 1;
-                            taking_damage.Play(0.5f,0,0);
+                            taking_damage.Play(0.5f, 0, 0);
                             current_lcooldown = 0;
                             player_sprite.velocity.X -= 10;
                         }
@@ -604,20 +586,6 @@ namespace The_Wee_Mad_Yin
                         }
 
                     }
-                    //else if (player_box.Intersects(x.eagle_box) && (player_sprite.position.Y > x.eagle_position.Y))
-                    //{
-                    //    player_sprite.velocity.Y = 0;
-                    //    if ((player_sprite.position.Y - (x.eagle_position.Y + x.eagle_sprite.Height) < 20))
-                    //    {
-                    //        player_sprite.position.Y = x.eagle_position.Y + x.eagle_sprite.Height;
-                    //        player_sprite.velocity.Y += 10;
-                    //        if (current_lcooldown >= life_cooldown)
-                    //        {
-                    //            lives -= 1;
-                    //            current_lcooldown = 0;
-                    //        }
-                    //    }
-                    //}
 
                     foreach (Block b in blocks)
                     {
@@ -642,15 +610,9 @@ namespace The_Wee_Mad_Yin
                     x.haggis_box = new Rectangle((int)x.haggis_sprite.position.X, (int)x.haggis_sprite.position.Y, x.haggis_sprite.sprite_animation.rect.Width, x.haggis_sprite.sprite_animation.rect.Height);
                     x.haggis_sprite.velocity.X = 2;
 
-              //      if (speedup == true)
-                //    {
-                  //      x.haggis_velo = 0.6f;
-                    //    speedup = false;
-                  //  }
-
                     x.haggis_sprite.position.X += x.haggis_velo * current_time;
 
-                    if(x.haggis_box.Intersects(player_box) && (jump == true))
+                    if (x.haggis_box.Intersects(player_box) && (jump == true))
                     {
                         haggis_hit = x;
                         jump = true;
@@ -662,12 +624,12 @@ namespace The_Wee_Mad_Yin
                     if (x.haggis_box.Intersects(player_box) && (jump == false) && (current_lcooldown >= life_cooldown))
                     {
                         lives--;
-                        taking_damage.Play(0.5f,0,0);
+                        taking_damage.Play(0.5f, 0, 0);
                         current_lcooldown = 0;
                         player_sprite.velocity.X -= 10;
                     }
 
-                    foreach(Block b in blocks)
+                    foreach (Block b in blocks)
                     {
                         b.block_box = new Rectangle((int)b.block_position.X, (int)b.block_position.Y, (int)b.block_sprite.Width, (int)b.block_sprite.Height);
 
@@ -707,13 +669,13 @@ namespace The_Wee_Mad_Yin
                         && ((player_sprite.position.X - (x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width) < 10)))
                     {
                         player_sprite.velocity.X -= 10;
-                        taking_damage.Play(0.5f,0,0);
+                        taking_damage.Play(0.5f, 0, 0);
                         if ((player_sprite.position.X - (x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width) > 1))
                         {
                             player_sprite.position.X = x.thistle_sprite.position.X - player_sprite.sprite_animation.rect.Width;
                         }
 
-                        if(current_lcooldown >= life_cooldown)
+                        if (current_lcooldown >= life_cooldown)
                         {
                             lives--;
                             current_lcooldown = 0;
@@ -722,7 +684,7 @@ namespace The_Wee_Mad_Yin
                     else if (player_box.Intersects(x.thistle_box) && (player_sprite.position.X > x.thistle_sprite.position.X) && (player_sprite.position.Y >= x.thistle_sprite.position.Y))
                     {
                         player_sprite.velocity.X += 10;
-                        taking_damage.Play(0.5f,0,0);
+                        taking_damage.Play(0.5f, 0, 0);
                         if ((player_sprite.position.X - (x.thistle_sprite.position.X + x.thistle_sprite.sprite_animation.rect.Width) < 39))
                         {
                             player_sprite.position.X = x.thistle_sprite.position.X + x.thistle_sprite.sprite_animation.rect.Width;
@@ -737,7 +699,7 @@ namespace The_Wee_Mad_Yin
                     {
                         jump = true;
                         player_sprite.velocity.Y -= 60;
-                        taking_damage.Play(0.5f,0,0);
+                        taking_damage.Play(0.5f, 0, 0);
                         if ((player_sprite.position.Y - (x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height) > 6))
                         {
                             player_sprite.position.Y = x.thistle_sprite.position.Y - player_sprite.sprite_animation.rect.Height;
@@ -747,7 +709,6 @@ namespace The_Wee_Mad_Yin
                             lives--;
                             current_lcooldown = 0;
                         }
-                        //thistle_hit = x;
                     }
                 }
 
@@ -769,16 +730,14 @@ namespace The_Wee_Mad_Yin
                     eagles.Remove(eagle_hit);
                 }
 
-                if (thistle_hit != null)
-                {
-                    thistles.Remove(thistle_hit);
-                }
-
                 if (lives < 1)
                 {
                     gameon = false;
                     gameover = true;
                     gameover_sound.Play();
+
+                    if (score > highscores[lasthighscore])
+                        highscorenames[lasthighscore] = "";
                 }
 
                 //for (int i = 0; i < level_number; i++)
@@ -792,20 +751,53 @@ namespace The_Wee_Mad_Yin
                 player_camera.Position = new Vector2(0, 0);
                 IsMouseVisible = true;
                 Rectangle restart_box = new Rectangle((int)restart_button.position.X, (int)restart_button.position.Y, restart_button.graphic.Width, restart_button.graphic.Height);
-                //for (int i = 0; i < 9; i++)
-                //{
-                //if (score > highscores[i])
-                //{
-                //    var writer = new StreamWriter("Scores.txt");
 
-                //    writer.Write(Convert.ToString(score));
+                // Game is over
+                if (score > highscores[lasthighscore])
+                {
+                    keycounter -= timebetweenupdates; // Counter to delay between keys of the same value being entered
+                    if (keyboardreleased)
+                    {
+                        if (keys.IsKeyDown(Keys.Back) && highscorenames[lasthighscore].Length > 0)
+                        {
+                            highscorenames[lasthighscore] = highscorenames[lasthighscore].Substring(0, highscorenames[lasthighscore].Length - 1);
+                        }
+                        else
+                        {
+                            char nextchar = sfunctions2d.getnextkey();
+                            char lastchar = '!';
+                            if (highscorenames[lasthighscore].Length > 0)
+                                lastchar = Convert.ToChar(highscorenames[lasthighscore].Substring(highscorenames[lasthighscore].Length - 1, 1));
+                            if (nextchar != '!' && (nextchar != lastchar || keycounter < 0))
+                            {
+                                keycounter = keystrokedelay;
+                                highscorenames[lasthighscore] += nextchar;
+                                if (highscorenames[lasthighscore].Length > maxnamelength)
+                                    highscorenames[lasthighscore] = highscorenames[lasthighscore].Substring(0, maxnamelength);
+                            }
+                        }
+                    }
 
-                //    writer.Close();
-                //}
-                //} 
+                    // Allow game to return to the main menu
+                    if (controller.Buttons.B == ButtonState.Pressed || keys.IsKeyDown(Keys.Enter))
+                    {
+                        if (score > highscores[lasthighscore])
+                        {
+                            highscores[lasthighscore] = score;
+                        }
+
+                        // Sort the high score table
+                        Array.Sort(highscores, highscorenames);
+                        Array.Reverse(highscores);
+                        Array.Reverse(highscorenames);
+
+                        returntomain();
+                    }
+                }
+
                 if (hard == true)
                 {
-                        score *= 1.3f;
+                    score = (int)((float)score * 1.3f);
                     hard = false;
                     speedup = false;
                 }
@@ -817,25 +809,55 @@ namespace The_Wee_Mad_Yin
                 {
                     restart_button = new sprite(Content, "button_restart", (screen_width * 3 / 8), (screen_height * 17 / 20 - screen_height / 10), 1);
                 }
+
+                // Allow game to return to the main menu
                 if (mouse_box.Intersects(restart_box) && (mouse.LeftButton == ButtonState.Pressed))
                 {
-                    gameover = false;
-                    gameon = true;
-                    level_number = 0;
-                    button_forward.Play();
-                    Load_Level();
-                    player_sprite.position = new Vector2(200, screen_height - 200);
-                    defaultlives = 3;
-                    lives = defaultlives;
-                    score = 0;
+                    if (score > highscores[lasthighscore])
+                    {
+                        highscores[lasthighscore] = score;
+                    }
+
+                    // Sort the high score table
+                    Array.Sort(highscores, highscorenames);
+                    Array.Reverse(highscores);
+                    Array.Reverse(highscorenames);
+
+                    startgame();
+                    lives = 3;
                 }
             }
 
-
-
             // TODO: Add your update logic here
+            lastkeystate = keys;                     // Read keyboard
 
             base.Update(gameTime);
+        }
+
+        void startgame()
+        {
+            gameover = false;
+            gameon = true;
+            menu = false;
+            options = false;
+            leaderboard = false;
+            songplaying = false;
+            MediaPlayer.Volume = 1;
+            button_forward.Play();
+            player_sprite.position = new Vector2(200, screen_height - 200);
+            lives = defaultlives;
+            score = 0;
+            level_number = 0;
+            Load_Level();
+        }
+
+        void returntomain()
+        {
+            gameon = false;
+            options = false;
+            leaderboard = false;
+            menu = true;
+            MediaPlayer.Volume = 0.1f;
         }
 
         /// <summary>
@@ -858,24 +880,20 @@ namespace The_Wee_Mad_Yin
                 }
             }
 
-            if (leaderboard == true)
+            else if (leaderboard == true)
             {
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
-                spriteBatch.DrawString(info, "High Scores", new Vector2 ((screen_width * 4/7), (screen_height * 1/4 - screen_height / 10)), Color.Red);
-                spriteBatch.DrawString(info, "1.            " + highscores[0] + "                   " + names[0], new Vector2(340, 150), Color.Red);
-                spriteBatch.DrawString(info, "2.            " + highscores[1] + "                   " + names[1], new Vector2(340, 170), Color.Red);
-                spriteBatch.DrawString(info, "3.            " + highscores[2] + "                   " + names[2], new Vector2(340, 190), Color.Red);
-                spriteBatch.DrawString(info, "4.            " + highscores[3] + "                   " + names[3], new Vector2(340, 210), Color.Red);
-                spriteBatch.DrawString(info, "5.            " + highscores[4] + "                   " + names[4], new Vector2(340, 230), Color.Red);
-                spriteBatch.DrawString(info, "6.            " + highscores[5] + "                   " + names[5], new Vector2(340, 250), Color.Red);
-                spriteBatch.DrawString(info, "7.            " + highscores[6] + "                   " + names[6], new Vector2(340, 270), Color.Red);
-                spriteBatch.DrawString(info, "8.            " + highscores[7] + "                   " + names[7], new Vector2(340, 290), Color.Red);
-                spriteBatch.DrawString(info, "9.            " + highscores[8] + "                   " + names[8], new Vector2(340, 310), Color.Red);
-                spriteBatch.DrawString(info, "10.          " + highscores[9] + "                   " + names[9], new Vector2(340, 330), Color.Red);
+                spriteBatch.DrawString(info, "High Scores", new Vector2((screen_width * 4 / 7), (screen_height * 1 / 4 - screen_height / 10)), Color.Red);
+
+                for (int x = 0; x < 10; x++)
+                {
+                    spriteBatch.DrawString(info, (x + 1).ToString("0") + ".         " + highscores[x] + "       " + highscorenames[x], new Vector2(300, 150 + (x * 20)), Color.Red);
+                }
+
                 back_button.DrawRectangle(spriteBatch, buttons[1].graphic.Width, buttons[1].graphic.Height);
             }
 
-            if (options == true)
+            else if (options == true)
             {
                 background_main.DrawRectangle(spriteBatch, screen_width, screen_height);
                 for (int i = 0; i < option_buttons.Length; i++)
@@ -884,7 +902,7 @@ namespace The_Wee_Mad_Yin
                 }
             }
 
-            if (gameon == true)
+            else if (gameon == true)
             {
 
                 for (int i = 0; i < level_number; i++)
@@ -892,42 +910,51 @@ namespace The_Wee_Mad_Yin
                     backgrounds[i].DrawRectangle(spriteBatch, 2400, 600);
                 }
 
-                    player_sprite.DrawNormal(spriteBatch);
+                player_sprite.DrawNormal(spriteBatch);
                 bottled_juice.DrawNormal(spriteBatch);
 
-                    foreach (Eagle x in eagles)
-                    {
-                        x.Draw_Eagle(spriteBatch);
-                    }
+                foreach (Eagle x in eagles)
+                {
+                    x.Draw_Eagle(spriteBatch);
+                }
 
-                    foreach (Haggis x in haggises)
-                    {
-                        x.Draw_Haggis(spriteBatch);
-                    }
+                foreach (Haggis x in haggises)
+                {
+                    x.Draw_Haggis(spriteBatch);
+                }
 
-                    foreach (Shortbread x in shortbreads)
-                    {
-                        x.Draw_Shortbread(spriteBatch);
-                    }
+                foreach (Shortbread x in shortbreads)
+                {
+                    x.Draw_Shortbread(spriteBatch);
+                }
 
-                    foreach (Thistle x in thistles)
-                    {
-                        x.Draw_Thistle(spriteBatch);
-                    }
+                foreach (Thistle x in thistles)
+                {
+                    x.Draw_Thistle(spriteBatch);
+                }
 
-                    foreach (Block x in blocks)
-                    {
-                        x.Draw_Block(spriteBatch);
-                    }
+                foreach (Block x in blocks)
+                {
+                    x.Draw_Block(spriteBatch);
+                }
             }
 
-            if (gameover == true)
+            else if (gameover == true)
             {
                 background_gameover.DrawNormal(spriteBatch);
 
                 restart_button.DrawNormal(spriteBatch);
 
-                spriteBatch.DrawString(info,"Your Score:    " + score, new Vector2(300, 300), Color.Red);
+                spriteBatch.DrawString(info, "Your Score:    " + score, new Vector2(300, 300), Color.Red);
+
+                if (score > highscores[numberofhighscores - 1])
+                {
+                    spriteBatch.DrawString(info, "New High Score Enter Name", new Vector2(100 + screen_width / 2 - (int)(info.MeasureString("New High Score Enter Name").X * (1f / 2f)), 350),
+                            Color.Blue, MathHelper.ToRadians(0), new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(info, highscorenames[numberofhighscores - 1], new Vector2(100 + screen_width / 2 - (int)(info.MeasureString("New High Score Enter Name").X * (1f / 2f)), 390),
+                            Color.AliceBlue, MathHelper.ToRadians(0), new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+                }
+
             }
 
             spriteBatch.End();
@@ -949,10 +976,10 @@ namespace The_Wee_Mad_Yin
 
         protected void Load_Level()
         {
-            Clear();   
+            Clear();
             MediaPlayer.Stop();
             level_number++;
-            
+
             if (level_number == 1)
             {
                 bottled_juice.position.Y = 400;
@@ -1574,7 +1601,7 @@ namespace The_Wee_Mad_Yin
                     Eagle eagle_1 = new Eagle(Content);
                     Eagle eagle_2 = new Eagle(Content);
                     Thistle thistle_1 = new Thistle(Content);
-                    haggis_1.haggis_sprite.position = new Vector2(200,370);
+                    haggis_1.haggis_sprite.position = new Vector2(200, 370);
                     haggis_2.haggis_sprite.position = new Vector2(300, 370);
                     haggis_3.haggis_sprite.position = new Vector2(400, 370);
                     haggis_4.haggis_sprite.position = new Vector2(500, 370);
@@ -1593,30 +1620,30 @@ namespace The_Wee_Mad_Yin
                     eagles.Add(eagle_2);
                     thistles.Add(thistle_1);
                 }
-                    for (int x = 0; x < 5; x++)
-                    {
-                        Block blocks_1 = new Block(Content, "scaffolding_lower");
-                        Block blocks_2 = new Block(Content, "scaffolding_lower");
-                        Block blocks_3 = new Block(Content, "scaffolding_lower");
-                        Block blocks_4 = new Block(Content, "scaffolding_lower");
-                        Block blocks_5 = new Block(Content, "scaffolding_lower");
-                        Block blocks_6 = new Block(Content, "scaffolding_lower");
-                        Block blocks_7 = new Block(Content, "scaffolding_top");
-                        blocks_1.block_position = new Vector2(0 + x * 40, 560);
-                        blocks_2.block_position = new Vector2(0 + x * 40, 520);
-                        blocks_3.block_position = new Vector2(0 + x * 40, 480);
-                        blocks_4.block_position = new Vector2(0 + x * 40, 440);
-                        blocks_5.block_position = new Vector2(0 + x * 40, 400);
-                        blocks_6.block_position = new Vector2(0 + x * 40, 360);
-                        blocks_7.block_position = new Vector2(0 + x * 40, 320);
-                        blocks.Add(blocks_1);
-                        blocks.Add(blocks_2);
-                        blocks.Add(blocks_3);
-                        blocks.Add(blocks_4);
-                        blocks.Add(blocks_5);
-                        blocks.Add(blocks_6);
-                        blocks.Add(blocks_7);
-                    }
+                for (int x = 0; x < 5; x++)
+                {
+                    Block blocks_1 = new Block(Content, "scaffolding_lower");
+                    Block blocks_2 = new Block(Content, "scaffolding_lower");
+                    Block blocks_3 = new Block(Content, "scaffolding_lower");
+                    Block blocks_4 = new Block(Content, "scaffolding_lower");
+                    Block blocks_5 = new Block(Content, "scaffolding_lower");
+                    Block blocks_6 = new Block(Content, "scaffolding_lower");
+                    Block blocks_7 = new Block(Content, "scaffolding_top");
+                    blocks_1.block_position = new Vector2(0 + x * 40, 560);
+                    blocks_2.block_position = new Vector2(0 + x * 40, 520);
+                    blocks_3.block_position = new Vector2(0 + x * 40, 480);
+                    blocks_4.block_position = new Vector2(0 + x * 40, 440);
+                    blocks_5.block_position = new Vector2(0 + x * 40, 400);
+                    blocks_6.block_position = new Vector2(0 + x * 40, 360);
+                    blocks_7.block_position = new Vector2(0 + x * 40, 320);
+                    blocks.Add(blocks_1);
+                    blocks.Add(blocks_2);
+                    blocks.Add(blocks_3);
+                    blocks.Add(blocks_4);
+                    blocks.Add(blocks_5);
+                    blocks.Add(blocks_6);
+                    blocks.Add(blocks_7);
+                }
                 for (int x = 0; x < 16; x++)
                 {
                     Block blocks_8 = new Block(Content, "scaffolding_lower");
